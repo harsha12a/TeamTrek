@@ -6,7 +6,7 @@ post http://localhost:4000/user/register
 Content-Type: application/json
 
 {
-    "name": "John Doe",
+    "name": "Red",
     "email": "red@gmail.com",
     "password": "123456",
     "contact": "9999888880"
@@ -17,9 +17,18 @@ post http://localhost:4000/user/login
 Content-Type: application/json
 
 {
-    "email": "red@gmail.com",
+    "email": "blue@gmail.com",
     "password": "123456"
 }
 
 ###
-delete http://localhost:4000/user/67a8867e266dcca53442ff28
+put http://localhost:4000/user/67aa11fd3adb5f86b4ad3657
+Content-Type: application/json
+
+{
+    "name": "Red",
+    "email": "blue@gmail.com"
+}
+
+###
+delete http://localhost:4000/user/67aa11dd96be83112fbba8c9

@@ -19,12 +19,10 @@ const taskSchema = new mongoose.Schema({
             ref: 'User'
         }
     ],
-    groupId: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Group'
-        }
-    ],
+    groupId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group'
+    },
     status: {
         type: String,
         enum: ['pending', 'inProgress', 'completed'],
@@ -48,4 +46,4 @@ const taskSchema = new mongoose.Schema({
     ]
 })
 
-module.exports = mongoose.model('Tasks', taskSchema)
+module.exports = mongoose.model('Task', taskSchema)

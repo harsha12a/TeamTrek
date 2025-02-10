@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const groupSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     description: {
         type: String,
@@ -23,7 +24,7 @@ const groupSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
 })
 
 module.exports = mongoose.model('Group', groupSchema)
