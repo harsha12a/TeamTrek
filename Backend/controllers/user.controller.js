@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt')
 const User = require('../models/user.model')
 
 const getUser = async (req, res) => {
@@ -13,8 +14,8 @@ const regUser = async (req, res) => {
     try {
         const existingUser = await User.findOne({ email: req.body.email })
         if (existingUser) return res.status(400).json({ message: "Email already in use" })
-        const user = await User.create(req.body)
-        console.log(user)
+        const user = {...req.body, password: bcrypt.hashSync(req.body.password, 10)}
+        await User.create(user)
         res.status(200).send({ message: 'User created successfully'})
     } catch (error) {
         res.status(500).json({ message: error })
@@ -25,7 +26,10 @@ const loginUser = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
         if(!user) return res.status(400).json({ message: "User not found" })
-        if(user.password !== req.body.password) return res.status(400).json({ message: "Invalid password" })
+        bcrypt.compare(req.body.password, user.password, (err, result) => {
+            if (err) return res.status(500).json({ message: err })
+            if (!result) return res.status(400).json({ message: "Incorrect password" })
+        })
         res.status(200).json(user)
     }
     catch (error) {

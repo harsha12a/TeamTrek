@@ -6,8 +6,8 @@ post http://localhost:4000/user/register
 Content-Type: application/json
 
 {
-    "name": "Red",
-    "email": "red@gmail.com",
+    "name": "Black",
+    "email": "black@gmail.com",
     "password": "123456",
     "contact": "9999888880"
 }
@@ -17,7 +17,7 @@ post http://localhost:4000/user/login
 Content-Type: application/json
 
 {
-    "email": "blue@gmail.com",
+    "email": "black@gmail.com",
     "password": "123456"
 }
 
