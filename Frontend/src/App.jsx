@@ -3,6 +3,7 @@ import Home from './components/Home'
 import RootLayout from './RootLayout'
 import Register from './components/Register'
 import Login from './components/Login'
+import DashBoard from './components/DashBoard'
 function App() {
   const browser = createBrowserRouter([
     {
@@ -20,6 +21,10 @@ function App() {
         {
           path: 'login',
           element: <Login />
+        },
+        {
+          path: 'dashboard',
+          element: <DashBoard />
         }
       ]
     }

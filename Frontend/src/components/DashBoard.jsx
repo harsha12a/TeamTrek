@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 
-export default function DashBoard() {
+function DashBoard() {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState("");
 
@@ -49,3 +49,5 @@ export default function DashBoard() {
     </div>
   );
 }
+
+export default DashBoard
