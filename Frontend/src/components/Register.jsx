@@ -1,14 +1,42 @@
-import { useForm } from "react-hook-form";
-import pic from "../assets/login-bg.jpg";
+import { useForm } from "react-hook-form"
+import pic from "../assets/login-bg.jpg"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
+import { ToastContainer, toast } from "react-toastify"
 function Register() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm()
+  const navigate = useNavigate()
   const onSubmit = (data) => {
-    console.log(data);
-  };
+    if (data.password !== data.confirmPassword) {
+      alert("Passwords do not match")
+      return
+    }
+    axios
+      .post("http://localhost:4000/user/register", data)
+      .then((res) => {
+        toast.success(res.data, {
+          position: "top-center",
+          autoClose: 2000,
+          closeOnClick: true,
+          draggable: true,
+        })
+        setTimeout(() => {
+          navigate("/login")
+        }, 2000)
+      })
+      .catch((err) => {
+        toast.success(err.response.data.message, {
+          position: "top-center",
+          autoClose: 2000,
+          closeOnClick: true,
+          draggable: true,
+        })
+      })
+  }
   return (
     <div
       className="pt-28"
@@ -19,6 +47,7 @@ function Register() {
         backgroundPosition: "center",
       }}
     >
+      <ToastContainer />
       <div className="max-w-md mx-auto bg-transparent backdrop-blur-xl p-6 rounded-lg shadow-md">
         <div className="text-center text-4xl text-white font-bold">
           Register
@@ -101,7 +130,7 @@ function Register() {
               Confirm Password
             </label>
             <input
-              type="confirmPassword"
+              type="password"
               {...register("confirmPassword", { required: true })}
               className="bg-gray-100 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -122,7 +151,7 @@ function Register() {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default Register;
+export default Register

@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import logo from "../assets/logo.png";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/userSlice";
 
 function Header() {
   const desktopLinks = useRef(null);
@@ -10,6 +11,7 @@ function Header() {
   const [menu, setMenu] = useState(false);
   const [dis, setDis] = useState({ sm: "hidden" });
   const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
   useEffect(() => {
     setDis({ sm: menu ? "block" : "hidden" });
   }, [menu]);
@@ -94,6 +96,15 @@ function Header() {
                   Groups
                 </Link>
                 <Link
+                  className="cursor-pointer text-[17px] pt-20"
+                  onClick={() => {
+                    setMenu(false);
+                    dispatch(logout());
+                  }}
+                >
+                  Logout
+                </Link>
+                <Link
                   className="cursor-pointer text-[17px] py-20"
                   to={"profile"}
                   onClick={() => setMenu(false)}
@@ -132,6 +143,15 @@ function Header() {
               </Link>
               <Link className="cursor-pointer text-[17px]" to={"groups"}>
                 Groups
+              </Link>
+              <Link
+                className="cursor-pointer text-[17px]"
+                onClick={() => {
+                  setMenu(false)
+                  dispatch(logout())
+                }}
+              >
+                Logout
               </Link>
               <Link className="cursor-pointer text-[17px]" to={"profile"}>
                 Profile

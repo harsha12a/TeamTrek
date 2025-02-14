@@ -1,20 +1,40 @@
-import { useForm } from "react-hook-form";
-import pic from "../assets/login-bg.jpg";
-import { useSelector, useDispatch } from "react-redux";
-import { login } from "../redux/userSlice";
+import { useForm } from "react-hook-form"
+import pic from "../assets/login-bg.jpg"
+import { useDispatch } from "react-redux"
+import axios from "axios"
+import { login } from "../redux/userSlice"
+import { useNavigate } from "react-router-dom"
+import { ToastContainer, toast } from 'react-toastify'
 function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm()
+  const navigate = useNavigate()
 
-  const user = useSelector((state) => state.user.user);
-  let dispatch = useDispatch();
+  let dispatch = useDispatch()
   const onSubmit = (data) => {
-    dispatch(login(data));
-    console.log(user);
-  };
+    axios.post('http://localhost:4000/user/login', data).then((res) => {
+      dispatch(login(res.data))
+      toast.success("Logged in successfully", {
+        position: "top-center",
+        autoClose: 2000,
+        closeOnClick: true,
+        draggable: true,
+      })
+      setTimeout(() => {
+        navigate('/dashboard')
+      }, 2000)
+    }).catch((err) => {
+      toast.error(err.response.data.message, {
+        position: "top-center",
+        autoClose: 2000,
+        closeOnClick: true,
+        draggable: true
+      })
+    })
+  }
   return (
     <div
       className="pt-28 z-10"
@@ -25,6 +45,7 @@ function Login() {
         backgroundPosition: "center",
       }}
     >
+      <ToastContainer />
       <div className="max-w-md mx-auto bg-transparent backdrop-blur-xl p-6 rounded-lg shadow-md">
         <div className="text-center text-white text-4xl font-bold">Login</div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
@@ -75,7 +96,7 @@ function Login() {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login
