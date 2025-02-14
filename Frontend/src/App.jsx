@@ -4,6 +4,9 @@ import RootLayout from './RootLayout'
 import Register from './components/Register'
 import Login from './components/Login'
 import DashBoard from './components/DashBoard'
+import UserProfile from './components/UserProfile'
+import Groups from './components/Groups'
+import NotFound from './components/NotFound'
 function App() {
   const browser = createBrowserRouter([
     {
@@ -25,6 +28,18 @@ function App() {
         {
           path: 'dashboard',
           element: <DashBoard />
+        },
+        {
+          path: 'profile',
+          element: <UserProfile />
+        },
+        {
+          path: 'groups',
+          element: <Groups />
+        },
+        {
+          path: '*',
+          element: <NotFound />
         }
       ]
     }

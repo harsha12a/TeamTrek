@@ -1,18 +1,18 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
-import logo from '../assets/logo.png'
+import logo from "../assets/logo.png";
+import { useSelector } from "react-redux";
 
 function Header() {
   const desktopLinks = useRef(null);
   const menuLinks = useRef(null);
   const [menu, setMenu] = useState(false);
   const [dis, setDis] = useState({ sm: "hidden" });
-
+  const user = useSelector((state) => state.user.user);
   useEffect(() => {
-    setDis({ sm: menu? "block" : "hidden" });
+    setDis({ sm: menu ? "block" : "hidden" });
   }, [menu]);
-
   useEffect(() => {
     if (desktopLinks.current) {
       const links = desktopLinks.current.querySelectorAll("a");
@@ -46,40 +46,98 @@ function Header() {
 
         {/* Mobile Menu */}
         {menu && (
-          <div className={dis.sm}>
-            <div
-              className="flex flex-col absolute justify-between items-center bg-blend-multiply w-full backdrop-blur-lg bg-transparent h-[300px] top-[90px] left-0"
-              ref={menuLinks}
-            >
-              <Link className="cursor-pointer text-[17px] pt-20" to={"/"} onClick={() => setMenu(false)}>
-                Home
-              </Link>
-              <Link className="cursor-pointer text-[17px] pt-20" to={"login"} onClick={() => setMenu(false)}>
-                Login
-              </Link>
-              <Link className="cursor-pointer text-[17px] py-20" to={"register"} onClick={() => setMenu(false)}>
-                Register
-              </Link>
-            </div>
+          <div className={`${dis.sm}`}>
+            {!user ? (
+              <div
+                className="flex flex-col absolute justify-between items-center bg-blend-multiply w-full backdrop-blur-lg bg-transparent top-1/2 transform -translate-y-1/2 left-0 z-[1000]"
+                ref={menuLinks}
+              >
+                <Link
+                  className="cursor-pointer text-[17px] pt-20"
+                  to={"/"}
+                  onClick={() => setMenu(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  className="cursor-pointer text-[17px] pt-20"
+                  to={"login"}
+                  onClick={() => setMenu(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  className="cursor-pointer text-[17px] py-20"
+                  to={"register"}
+                  onClick={() => setMenu(false)}
+                >
+                  Register
+                </Link>
+              </div>
+            ) : (
+              <div
+                className="flex flex-col absolute justify-between items-center bg-blend-multiply w-full backdrop-blur-lg bg-transparent h-[300px] top-[90px] left-0"
+                ref={menuLinks}
+              >
+                <Link
+                  className="cursor-pointer text-[17px] pt-20"
+                  to={"dashboard"}
+                  onClick={() => setMenu(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  className="cursor-pointer text-[17px] pt-20"
+                  to={"groups"}
+                  onClick={() => setMenu(false)}
+                >
+                  Groups
+                </Link>
+                <Link
+                  className="cursor-pointer text-[17px] py-20"
+                  to={"profile"}
+                  onClick={() => setMenu(false)}
+                >
+                  Profile
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
         {/* Desktop Menu */}
         <div className="hidden md:block sm:block">
-          <div
-            className="flex flex-wrap justify-between items-center gap-20"
-            ref={desktopLinks}
-          >
-            <Link className="cursor-pointer text-[17px]" to={"/"}>
-              Home
-            </Link>
-            <Link className="cursor-pointer text-[17px]" to={"login"}>
-              Login
-            </Link>
-            <Link className="cursor-pointer text-[17px]" to={"register"}>
-              Register
-            </Link>
-          </div>
+          {!user ? (
+            <div
+              className="flex flex-wrap justify-between items-center gap-20"
+              ref={desktopLinks}
+            >
+              <Link className="cursor-pointer text-[17px]" to={"/"}>
+                Home
+              </Link>
+              <Link className="cursor-pointer text-[17px]" to={"login"}>
+                Login
+              </Link>
+              <Link className="cursor-pointer text-[17px]" to={"register"}>
+                Register
+              </Link>
+            </div>
+          ) : (
+            <div
+              className="flex flex-wrap justify-between items-center gap-20"
+              ref={desktopLinks}
+            >
+              <Link className="cursor-pointer text-[17px]" to={"dashboard"}>
+                Dashboard
+              </Link>
+              <Link className="cursor-pointer text-[17px]" to={"groups"}>
+                Groups
+              </Link>
+              <Link className="cursor-pointer text-[17px]" to={"profile"}>
+                Profile
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Toggle Menu Button */}
