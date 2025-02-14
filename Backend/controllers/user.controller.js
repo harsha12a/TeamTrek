@@ -6,7 +6,7 @@ const getUser = async (req, res) => {
         const users = await User.find().select('-password')
         res.status(200).json(users)
     } catch (error) {
-        res.status(500).json({ message: error })
+        res.status(500).json({ message: error.message })
     }
 }
 
@@ -14,11 +14,12 @@ const regUser = async (req, res) => {
     try {
         const existingUser = await User.findOne({ email: req.body.email })
         if (existingUser) return res.status(400).json({ message: "Email already in use" })
-        const user = {...req.body, password: bcrypt.hashSync(req.body.password, 10)}
+        const hashed = await bcrypt.hash(req.body.password, 10)
+        const user = {...req.body, password: hashed}
         await User.create(user)
         res.status(200).send({ message: 'User created successfully'})
     } catch (error) {
-        res.status(500).json({ message: error })
+        res.status(500).json({ message: error.message })
     }
 }
 
@@ -26,14 +27,12 @@ const loginUser = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
         if(!user) return res.status(400).json({ message: "User not found" })
-        bcrypt.compare(req.body.password, user.password, (err, result) => {
-            if (err) return res.status(500).json({ message: err })
-            if (!result) return res.status(400).json({ message: "Incorrect password" })
-        })
+        let result = await bcrypt.compare(req.body.password, user.password)
+        if (!result) return res.status(400).json({ message: "Invalid password" })
         res.status(200).json(user)
     }
     catch (error) {
-        res.status(500).json({ message: error })
+        res.status(500).json({ message: error.message })
     }
 }
 
@@ -44,7 +43,7 @@ const modifyUser = async (req, res) => {
         res.status(200).json(user)
     }
     catch (error) {
-        res.status(500).json({ message: error })
+        res.status(500).json({ message: error.message })
     }
 }
 
@@ -54,7 +53,7 @@ const deleteUser = async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" })
         res.status(200).json({message: 'User deleted successfully'})
     } catch (error) {
-        res.status(500).json({ message: error })
+        res.status(500).json({ message: error.message })
     }
 }
 
