@@ -1,53 +1,23 @@
-import { useState } from "react";
-import { FaTrash } from "react-icons/fa";
+import { Link, Outlet } from "react-router-dom";
 
-function DashBoard() {
-  const [tasks, setTasks] = useState([]);
-  const [input, setInput] = useState("");
-
-  const addTask = () => {
-    if (input.trim()) {
-      setTasks([...tasks, input.trim()]);
-      setInput("");
-    }
-  };
-
-  const removeTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
-  };
-
+export default function DashBoard() {
   return (
-    <div className="flex flex-col items-center min-h-screen p-6 bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">To-Do List</h1>
-        <div className="flex gap-2 mb-4">
-          <input
-            type="text"
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter a task..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-            onClick={addTask}
-          >
-            Add
-          </button>
-        </div>
-        <ul className="space-y-2">
-          {tasks.map((task, index) => (
-            <li key={index} className="flex justify-between items-center p-2 bg-gray-200 rounded-lg">
-              <span>{task}</span>
-              <button className="text-red-500 hover:text-red-700" onClick={() => removeTask(index)}>
-                <FaTrash />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-r from-blue-400 to-purple-600 p-4">
+      <nav className="flex gap-4 mb-5 flex-wrap justify-center">
+        <Link 
+          to="add" 
+          className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition"
+        >
+          Add Task
+        </Link>
+        <Link 
+          to="tasks" 
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
+        >
+          View Tasks
+        </Link>
+      </nav>
+      <Outlet />
     </div>
   );
 }
-
-export default DashBoard

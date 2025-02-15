@@ -78,7 +78,7 @@ function Header() {
               </div>
             ) : (
               <div
-                className="flex flex-col absolute justify-between items-center bg-blend-multiply w-full backdrop-blur-lg bg-transparent h-[300px] top-[90px] left-0"
+                className="flex flex-col absolute justify-between items-center bg-blend-multiply w-full backdrop-blur-lg bg-transparent top-1/2 transform -translate-y-1/2 left-0 z-[1000]"
                 ref={menuLinks}
               >
                 <Link
