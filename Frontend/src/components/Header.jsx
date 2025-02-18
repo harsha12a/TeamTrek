@@ -42,9 +42,11 @@ function Header() {
   }, [menu]);
 
   return (
-    <div className="bg-gradient-to-r from-indigo-600 to-purple-700 p-5">
+    <div className="bg-white p-5">
       <nav className="flex h-[50px] justify-between flex-wrap items-center">
-        <img src={logo} alt="" className="w-20" />
+        
+        <div className="flex items-center"><img src={logo} alt="" className="w-20" /><div className="text-xl font-semibold">WorkGrid</div>
+        </div>
 
         {/* Mobile Menu */}
         {menu && (
@@ -66,14 +68,14 @@ function Header() {
                   to={"login"}
                   onClick={() => setMenu(false)}
                 >
-                  Login
+                  Sign In
                 </Link>
                 <Link
                   className="cursor-pointer text-[17px] py-20"
                   to={"register"}
                   onClick={() => setMenu(false)}
                 >
-                  Register
+                  Sign Up
                 </Link>
               </div>
             ) : (
@@ -127,10 +129,10 @@ function Header() {
                 Home
               </Link>
               <Link className="cursor-pointer text-[17px]" to={"login"}>
-                Login
+                Sign In
               </Link>
-              <Link className="cursor-pointer text-[17px]" to={"register"}>
-                Register
+              <Link className="cursor-pointer text-[17px] bg-blue-700 text-white py-2 px-5 rounded-md hover:bg-blue-800" to={"register"}>
+                Get Started
               </Link>
             </div>
           ) : (

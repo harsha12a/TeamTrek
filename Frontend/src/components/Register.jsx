@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import pic from "../assets/login-bg.jpg"
+import pic from "../assets/login_bg.png"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { ToastContainer, toast } from "react-toastify"
@@ -48,13 +48,13 @@ function Register() {
       }}
     >
       <ToastContainer />
-      <div className="max-w-md mx-auto bg-transparent backdrop-blur-xl p-6 rounded-lg shadow-md">
-        <div className="text-center text-4xl text-white font-bold">
+      <div className="max-w-md mx-auto bg-transparent backdrop-blur-xl p-6 rounded-lg shadow-[0_-10px_30px_-5px_rgba(0,0,0,0.3)]">
+        <div className="text-center text-4xl  font-bold">
           Register
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <div>
-            <label htmlFor="name" className="block text-white font-medium mb-1">
+            <label htmlFor="name" className="block  font-medium mb-1">
               Name
             </label>
             <input
@@ -71,7 +71,7 @@ function Register() {
           <div>
             <label
               htmlFor="email"
-              className="block text-white font-medium mb-1"
+              className="block  font-medium mb-1"
             >
               Email
             </label>
@@ -89,7 +89,7 @@ function Register() {
           <div>
             <label
               htmlFor="contact"
-              className="block text-white font-medium mb-1"
+              className="block  font-medium mb-1"
             >
               Contact Number
             </label>
@@ -107,7 +107,7 @@ function Register() {
           <div>
             <label
               htmlFor="password"
-              className="block text-white font-medium mb-1"
+              className="block  font-medium mb-1"
             >
               Password
             </label>
@@ -125,7 +125,7 @@ function Register() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-white font-medium mb-1"
+              className="block  font-medium mb-1"
             >
               Confirm Password
             </label>
