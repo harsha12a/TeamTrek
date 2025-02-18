@@ -42,7 +42,7 @@ function Header() {
   }, [menu]);
 
   return (
-    <div className="bg-[#E7BD09] p-5">
+    <div className="bg-gradient-to-r from-indigo-600 to-purple-700 p-5">
       <nav className="flex h-[50px] justify-between flex-wrap items-center">
         <img src={logo} alt="" className="w-20" />
 

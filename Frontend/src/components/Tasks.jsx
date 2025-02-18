@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -17,7 +17,17 @@ export default function Tasks() {
 
   return (
     <div className="w-full mt-5">
-      {tasks.length ? <h1 className="text-2xl text-center">Tasks</h1> : <h1 className="text-2xl text-center">No Tasks Available</h1>}
+      {tasks.length ? (
+        <h1 className="text-2xl text-center">Tasks</h1>
+      ) : (
+        <h1 className="text-2xl text-center">
+          No Tasks Available
+          <br />
+          <Link to={"../add"} className="text-red-900">
+            Add now
+          </Link>
+        </h1>
+      )}
       <ul className="space-y-2 lg:mx-20">
         {tasks.map((task, index) => (
           <motion.li
@@ -30,10 +40,16 @@ export default function Tasks() {
             <span className="text-gray-800 font-bold">{task.name}</span>
             <span className="text-gray-600">Due: {task.dueDate}</span>
             <div className="flex justify-end gap-2 mt-2">
-              <button onClick={() => editTask(index)} className="text-blue-500 hover:text-blue-700 transition">
+              <button
+                onClick={() => editTask(index)}
+                className="text-blue-500 hover:text-blue-700 transition"
+              >
                 <FaEdit />
               </button>
-              <button onClick={() => removeTask(index)} className="text-red-500 hover:text-red-700 transition">
+              <button
+                onClick={() => removeTask(index)}
+                className="text-red-500 hover:text-red-700 transition"
+              >
                 <FaTrash />
               </button>
             </div>

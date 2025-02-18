@@ -27,7 +27,7 @@ function Login() {
         navigate('/dashboard')
       }, 2000)
     }).catch((err) => {
-      toast.error(err.response.data.message, {
+      toast.error(err.response?.data?.message || err.message, {
         position: "top-center",
         autoClose: 2000,
         closeOnClick: true,

@@ -41,7 +41,7 @@ function App() {
             },
             {
               path: '',
-              element: <Navigate to={'add'} />
+              element: <Navigate to={'tasks'} />
             }
           ]
         },
