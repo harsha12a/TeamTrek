@@ -4,6 +4,7 @@ import gsap from "gsap";
 import logo from "../assets/logo.png";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/userSlice";
+import { FaUserCircle } from "react-icons/fa";
 
 function Header() {
   const desktopLinks = useRef(null);
@@ -56,13 +57,6 @@ function Header() {
                 className="flex flex-col absolute justify-between items-center bg-blend-multiply w-full backdrop-blur-lg bg-transparent top-1/2 transform -translate-y-1/2 left-0 z-[1000]"
                 ref={menuLinks}
               >
-                <Link
-                  className="cursor-pointer text-[17px] pt-20"
-                  to={"/"}
-                  onClick={() => setMenu(false)}
-                >
-                  Home
-                </Link>
                 <Link
                   className="cursor-pointer text-[17px] pt-20"
                   to={"login"}
@@ -125,9 +119,6 @@ function Header() {
               className="flex flex-wrap justify-between items-center gap-20"
               ref={desktopLinks}
             >
-              <Link className="cursor-pointer text-[17px]" to={"/"}>
-                Home
-              </Link>
               <Link className="cursor-pointer text-[17px]" to={"login"}>
                 Sign In
               </Link>
@@ -156,7 +147,7 @@ function Header() {
                 Logout
               </Link>
               <Link className="cursor-pointer text-[17px]" to={"profile"}>
-                Profile
+                <FaUserCircle className="text-4xl text-gray-500" />
               </Link>
             </div>
           )}

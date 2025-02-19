@@ -1,25 +1,28 @@
-import { Link, Outlet } from "react-router-dom"
-import { useSelector } from "react-redux"
+import { Link, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Plus } from "lucide-react";
 export default function DashBoard() {
-  const user = useSelector((state) => state.user.user)
+  const user = useSelector((state) => state.user.user);
   return (
     <div>
       {user ? (
-        <div className="min-h-screen flex flex-col items-center bg-gradient-to-r from-blue-400 to-purple-600 p-4">
+        <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-white to-gray-500 p-4">
           <nav className="flex gap-4 mb-5 flex-wrap justify-center">
             <Link
               to="add"
-              className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition"
+              className="bg-purple-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-purple-700 transition duration-300 transform hover:scale-105 flex items-center"
             >
+              <Plus />
               Add Task
             </Link>
             <Link
               to="tasks"
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition"
+              className="bg-teal-600 text-white px-6 py-3 rounded-xl shadow-lg hover:bg-teal-700 transition duration-300 transform hover:scale-105"
             >
-              View Tasks
+              📋 View Tasks
             </Link>
           </nav>
+
           <Outlet />
         </div>
       ) : (
@@ -32,5 +35,5 @@ export default function DashBoard() {
         </div>
       )}
     </div>
-  )
+  );
 }
