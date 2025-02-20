@@ -1,7 +1,23 @@
 import { Link } from 'react-router-dom';
 import { CheckCircle, Users, Shield, Zap } from 'lucide-react';
 import landing from '../assets/landing.png';
+import { useEffect, useRef } from 'react';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import gsap from 'gsap';
+gsap.registerPlugin(ScrollTrigger)
 function Home() {
+  let scrollink = useRef(null)
+  useEffect(() => {
+    let items = scrollink.current.querySelectorAll('.scroll')
+    gsap.fromTo(items,
+      {x:-200, opacity:0},
+      {x:0, opacity:1, duration:1.5, ease: 'power2.out', stagger: 0.5, scrollTrigger:{
+        trigger: scrollink.current,
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      }}
+    )
+  },[])
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-50">
       
@@ -52,8 +68,8 @@ function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gray-50 p-8 rounded-xl">
+          <div className="grid md:grid-cols-3 gap-8" ref={scrollink}>
+            <div className="bg-gray-50 p-8 rounded-xl scroll">
               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
                 <CheckCircle className="h-6 w-6 text-indigo-600" />
               </div>
@@ -66,7 +82,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="bg-gray-50 p-8 rounded-xl">
+            <div className="bg-gray-50 p-8 rounded-xl scroll">
               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
                 <Users className="h-6 w-6 text-indigo-600" />
               </div>
@@ -79,7 +95,7 @@ function Home() {
               </p>
             </div>
 
-            <div className="bg-gray-50 p-8 rounded-xl">
+            <div className="bg-gray-50 p-8 rounded-xl scroll">
               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
                 <Shield className="h-6 w-6 text-indigo-600" />
               </div>
