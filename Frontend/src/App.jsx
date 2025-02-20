@@ -9,6 +9,7 @@ import Groups from './components/Groups'
 import NotFound from './components/NotFound'
 import AddTask from './components/AddTask'
 import Tasks from './components/Tasks'
+import './App.css'
 function App() {
   const browser = createBrowserRouter([
     {

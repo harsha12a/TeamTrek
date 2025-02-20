@@ -18,7 +18,7 @@ export default function Tasks() {
   return (
     <div className="w-full mt-5">
       {tasks.length ? (
-        <h1 className="text-2xl text-center">Tasks</h1>
+        <h1 className="text-3xl fonting text-center">Tasks</h1>
       ) : (
         <h1 className="text-2xl text-center">
           No Tasks Available
