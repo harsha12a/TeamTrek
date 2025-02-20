@@ -1,0 +1,126 @@
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Users } from 'lucide-react';
+
+function App() {
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+    const [tags, setTags] = useState([]);
+    const [inputValue, setInputValue] = useState('');
+    
+    // Handle form submission
+    const create = (obj) => {
+        console.log('Form submitted with:', obj);
+        // Here you can send the data to your backend for saving the group
+    };
+
+    // Handle adding users to the group (tagging)
+    const handleInputChange = (e) => {
+        setInputValue(e.target.value);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            if (inputValue.trim() && !tags.includes(inputValue.trim())) {
+                setTags([...tags, inputValue.trim()]);
+                setInputValue('');
+            }
+        }
+    };
+
+    const handleDeleteTag = (tag) => {
+        setTags(tags.filter(t => t !== tag));
+    };
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex justify-center items-center p-4">
+            <div className="w-full max-w-md">
+                <form onSubmit={handleSubmit(create)} className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
+                    <div className="text-center">
+                        <div className="flex justify-center mb-4">
+                            <div className="p-3 bg-blue-100 rounded-full">
+                                <Users className="w-8 h-8 text-blue-600" />
+                            </div>
+                        </div>
+                        <h2 className="text-3xl font-bold text-gray-900">Create a Group</h2>
+                        <p className="mt-2 text-gray-600">Start collaborating with your team</p>
+                    </div>
+
+                    {/* Group Name */}
+                    <div className="space-y-2">
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                            Group Name
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            {...register('name', { required: 'Group name is required' })}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ease-in-out"
+                            placeholder="Enter group name"
+                        />
+                        {errors.name && (
+                            <p className="text-red-500 text-sm mt-1 flex items-center">
+                                <span className="mr-1">⚠️</span>
+                                {errors.name.message?.toString()}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Group Description */}
+                    <div className="space-y-2">
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                            Group Description
+                        </label>
+                        <textarea
+                            id="description"
+                            {...register('description')}
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ease-in-out"
+                            placeholder="Enter a description (optional)"
+                            rows="4"
+                        />
+                    </div>
+
+                    {/* People (User Tagging) */}
+                    <div className="space-y-2">
+                        <label htmlFor="people" className="block text-sm font-medium text-gray-700">
+                            People (Tag Users)
+                        </label>
+                        <div className="flex flex-wrap items-center gap-2 mb-4">
+                            {tags.map((tag, index) => (
+                                <span 
+                                    key={index} 
+                                    className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-blue-600"
+                                    onClick={() => handleDeleteTag(tag)}
+                                >
+                                    {tag} <span className="ml-2">&times;</span>
+                                </span>
+                            ))}
+                            <input
+                                type="text"
+                                value={inputValue}
+                                onChange={handleInputChange}
+                                onKeyDown={handleKeyDown}
+                                className="border p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Type user name and press Enter"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-200 ease-in-out hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                        Create Group
+                    </button>
+
+                    <p className="text-center text-sm text-gray-500">
+                        By creating a group, you agree to our Terms of Service and Privacy Policy
+                    </p>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+export default App;

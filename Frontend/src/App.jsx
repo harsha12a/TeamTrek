@@ -10,6 +10,7 @@ import NotFound from './components/NotFound'
 import AddTask from './components/AddTask'
 import Tasks from './components/Tasks'
 import './App.css'
+import CreateGroup from './components/CreateGroup'
 function App() {
   const browser = createBrowserRouter([
     {
@@ -53,6 +54,10 @@ function App() {
         {
           path: 'groups',
           element: <Groups />
+        },
+        {
+          path: 'creategroup',
+          element: <CreateGroup />
         },
         {
           path: '*',
