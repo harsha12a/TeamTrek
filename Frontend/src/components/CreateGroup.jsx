@@ -1,35 +1,48 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Users } from 'lucide-react';
 
-function App() {
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+function CreateGroup() {
+    const { register, handleSubmit, formState: { errors }, setError, clearErrors, trigger } = useForm();
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    
-    // Handle form submission
+
+    // Function to validate and submit the form
     const create = (obj) => {
+        if (tags.length === 0) {
+            setError('people', { type: 'manual', message: 'At least one user must be tagged' });
+            return;
+        }
+        clearErrors('people'); // Clear error when valid
+        obj.people = tags;
         console.log('Form submitted with:', obj);
-        // Here you can send the data to your backend for saving the group
     };
 
-    // Handle adding users to the group (tagging)
+    // Handle input change for user tagging
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
     };
 
+    // Add user on Enter key press
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
             if (inputValue.trim() && !tags.includes(inputValue.trim())) {
                 setTags([...tags, inputValue.trim()]);
                 setInputValue('');
+                clearErrors('people'); // Remove error when a tag is added
+                trigger('people'); // Revalidate
             }
         }
     };
 
+    // Remove a tagged user
     const handleDeleteTag = (tag) => {
-        setTags(tags.filter(t => t !== tag));
+        const updatedTags = tags.filter(t => t !== tag);
+        setTags(updatedTags);
+        if (updatedTags.length === 0) {
+            setError('people', { type: 'manual', message: 'At least one user must be tagged' });
+        }
     };
 
     return (
@@ -59,10 +72,7 @@ function App() {
                             placeholder="Enter group name"
                         />
                         {errors.name && (
-                            <p className="text-red-500 text-sm mt-1 flex items-center">
-                                <span className="mr-1">⚠️</span>
-                                {errors.name.message?.toString()}
-                            </p>
+                            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
                         )}
                     </div>
 
@@ -80,12 +90,12 @@ function App() {
                         />
                     </div>
 
-                    {/* People (User Tagging) */}
+                    {/* People (Tag Users) */}
                     <div className="space-y-2">
                         <label htmlFor="people" className="block text-sm font-medium text-gray-700">
                             People (Tag Users)
                         </label>
-                        <div className="flex flex-wrap items-center gap-2 mb-4">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
                             {tags.map((tag, index) => (
                                 <span 
                                     key={index} 
@@ -95,15 +105,18 @@ function App() {
                                     {tag} <span className="ml-2">&times;</span>
                                 </span>
                             ))}
-                            <input
-                                type="text"
-                                value={inputValue}
-                                onChange={handleInputChange}
-                                onKeyDown={handleKeyDown}
-                                className="border p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Type user name and press Enter"
-                            />
                         </div>
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            className="border p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Type user name and press Enter"
+                        />
+                        {errors.people && (
+                            <p className="text-red-500 text-sm mt-1">{errors.people.message}</p>
+                        )}
                     </div>
 
                     {/* Submit Button */}
@@ -123,4 +136,4 @@ function App() {
     );
 }
 
-export default App;
+export default CreateGroup;
