@@ -16,7 +16,7 @@ export const fetchTasks = createAsyncThunk("tasks/fetch", async (id, { rejectWit
 // Create a task
 export const createTask = createAsyncThunk("create", async (taskData, { rejectWithValue }) => {
     try {
-        const res = await axios.post(API_URL, taskData);
+        const res = await axios.post(`${API_URL}/create`, taskData);
         return res.data;
     } catch (err) {
         return rejectWithValue(err.response?.data?.message || "Task creation failed");

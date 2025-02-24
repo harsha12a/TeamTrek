@@ -1,61 +1,136 @@
 import { motion } from "framer-motion";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaEye, FaDownload, FaFileAlt } from "react-icons/fa";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {useSelector, useDispatch} from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 import { fetchTasks } from "../redux/taskSlice";
+
 export default function Tasks() {
-  // const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const tasks = useSelector((state) => state.tasks.tasks);
   const user = useSelector((state) => state.user.user);
-  // const removeTask = (index) => {
-  //   setTasks(tasks.filter((_, i) => i !== index));
-  // };
-  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(fetchTasks(user._id));
+    }
+  }, [user?._id, dispatch]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "No due date";
+    const date = new Date(dateString);
+    return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear()}`;
+  };
   const editTask = (index) => {
     navigate("/add", { state: { task: tasks[index], index } });
   };
 
-  useEffect(() => {
-    dispatch(fetchTasks(user._id));
-  }, [user._id, dispatch]);
   return (
-    <div className="w-full mt-5">
+    <div className="w-full mt-5 px-4 lg:px-20 max-w-4xl mx-auto">
       {tasks.length ? (
-        <h1 className="text-3xl fonting text-center">Tasks</h1>
+        <h1 className="text-3xl font-bold text-center fonting text-gray-800 mb-6">
+          Your Tasks
+        </h1>
       ) : (
-        <h1 className="text-2xl text-center">
+        <h1 className="text-2xl text-center text-gray-700">
           No Tasks Available
           <br />
-          <Link to={"../add"} className="text-red-900">
+          <Link to="../add" className="text-red-600 hover:underline">
             Add now
           </Link>
         </h1>
       )}
-      <ul className="space-y-2 lg:mx-20">
+      <ul className="space-y-4">
         {tasks.map((task, index) => (
           <motion.li
             key={index}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="flex flex-col p-3 bg-gray-100 rounded-lg shadow"
+            className="flex flex-col p-4 bg-white rounded-xl shadow-md border border-gray-200 sm:p-6"
           >
-            <span className="text-gray-800 font-bold">{task.name}</span>
-            <span className="text-gray-600">Due: {task.dueDate}</span>
-            <div className="flex justify-end gap-2 mt-2">
+            <h2 className="text-xl font-semibold text-gray-900">{task.title}</h2>
+            <p className="text-gray-600">{task.description || "No description available"}</p>
+            <p className="text-gray-500">Due Date: {formatDate(task.dueDate) || "No due date"}</p>
+            <p
+              className={`text-sm font-medium mt-1 ${
+                task.status === "completed" ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              Status: {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+            </p>
+            <p
+              className={`text-sm font-medium mt-1 ${
+                task.priority === "high"
+                  ? "text-red-600"
+                  : task.priority === "medium"
+                  ? "text-yellow-600"
+                  : "text-green-600"
+              }`}
+            >
+              Priority: {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+            </p>
+            {task.files && task.files.length > 0 && (
+              <div className="mt-2 border-t pt-2">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">Attachments:</h3>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {task.files.map((file, fileIndex) => (
+                    <li
+                      key={fileIndex}
+                      className="flex items-center gap-2 p-2 bg-gray-100 rounded-md"
+                    >
+                      <FaFileAlt className="text-gray-600" />
+                      <span className="text-gray-700 truncate w-32">{file.fileName}</span>
+                      <a
+                        href={file.filePath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline flex items-center gap-1"
+                      >
+                        <FaEye /> View
+                      </a>
+                      <a
+                        href={file.downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download={file.name || "download"}
+                        onClick={(e) => {
+                          if (!file.downloadUrl.startsWith(window.location.origin)) {
+                            e.preventDefault();
+                            fetch(file.downloadUrl)
+                              .then((res) => res.blob())
+                              .then((blob) => {
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = file.fileName || "download";
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                              })
+                              .catch((err) => console.error("Download failed", err));
+                          }
+                        }}
+                        className="text-green-500 hover:underline flex items-center gap-1"
+                      >
+                        <FaDownload /> Download
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="flex justify-end gap-4 mt-3">
               <button
                 onClick={() => editTask(index)}
                 className="text-blue-500 hover:text-blue-700 transition"
               >
-                <FaEdit />
+                <FaEdit size={18} />
               </button>
-              <button
-                // onClick={() => removeTask(index)}
-                className="text-red-500 hover:text-red-700 transition"
-              >
-                <FaTrash />
+              <button className="text-red-500 hover:text-red-700 transition">
+                <FaTrash size={18} />
               </button>
             </div>
           </motion.li>

@@ -26,7 +26,7 @@ export default function DashBoard() {
           <Outlet />
         </div>
       ) : (
-        <div className="text-white text-center pt-40 text-lg font-semibold h-screen bg-blue-500">
+        <div className="text-black text-center pt-40 text-xl fonting font-semibold h-screen bg-blue-200">
           Not logged in
           <br />
           <Link to={"../login"} className="text-red-900">
