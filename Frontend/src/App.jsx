@@ -11,6 +11,7 @@ import AddTask from './components/AddTask'
 import Tasks from './components/Tasks'
 import './App.css'
 import CreateGroup from './components/CreateGroup'
+import GroupDetails from './components/GroupDetails'
 function App() {
   const browser = createBrowserRouter([
     {
@@ -54,6 +55,10 @@ function App() {
         {
           path: 'groups',
           element: <Groups />
+        },
+        {
+          path: 'group/:id',
+          element: <GroupDetails />
         },
         {
           path: 'creategroup',

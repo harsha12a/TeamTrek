@@ -69,6 +69,21 @@ function Register() {
             )}
           </div>
           <div>
+            <label htmlFor="username" className="block  font-medium mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              {...register("username", { required: true })}
+              className="bg-gray-100 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {errors.username && (
+              <span className="text-sm text-red-500 font-semibold mt-1">
+                *Userame is required
+              </span>
+            )}
+          </div>
+          <div>
             <label
               htmlFor="email"
               className="block  font-medium mb-1"
