@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FiUpload, FiCheckCircle } from "react-icons/fi";
-
+import axios from "axios";
+import {useSelector} from 'react-redux'
 export default function AddTask() {
   const {
     register,
@@ -15,9 +16,12 @@ export default function AddTask() {
   });
 
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user);
 
   const onSubmit = (data) => {
-    console.log("Task Added:", data);
+    axios.post('http://localhost:4000/task/create', {...data, createdBy: user._id})
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
     navigate("../tasks");
   };
 
@@ -31,18 +35,18 @@ export default function AddTask() {
             <label className="block text-gray-700 font-medium">Task Name</label>
             <input
               type="text"
-              {...register("name", { required: "Task name is required" })}
+              {...register("title", { required: "Task name is required" })}
               className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter task name"
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
           </div>
 
           {/* Description */}
           <div>
             <label className="block text-gray-700 font-medium">Description</label>
             <textarea
-              {...register("desc")}
+              {...register("description")}
               className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter task description"
             ></textarea>

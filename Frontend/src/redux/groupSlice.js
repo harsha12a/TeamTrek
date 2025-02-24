@@ -22,7 +22,7 @@ export const editGroupAsync = createAsyncThunk(
       const response = await axios.put(`http://localhost:4000/group/edit/${id}`, updatedGroup);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Failed to update group");
+      return rejectWithValue(error.response?.data?.error || "Failed to update group");
     }
   }
 );

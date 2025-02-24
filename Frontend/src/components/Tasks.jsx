@@ -1,20 +1,25 @@
 import { motion } from "framer-motion";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import {useSelector, useDispatch} from 'react-redux'
+import { fetchTasks } from "../redux/taskSlice";
 export default function Tasks() {
-  const [tasks, setTasks] = useState([]);
+  // const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
-
-  const removeTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
-  };
-
+  const tasks = useSelector((state) => state.tasks.tasks);
+  const user = useSelector((state) => state.user.user);
+  // const removeTask = (index) => {
+  //   setTasks(tasks.filter((_, i) => i !== index));
+  // };
+  const dispatch = useDispatch();
   const editTask = (index) => {
     navigate("/add", { state: { task: tasks[index], index } });
   };
 
+  useEffect(() => {
+    dispatch(fetchTasks(user._id));
+  }, [user._id, dispatch]);
   return (
     <div className="w-full mt-5">
       {tasks.length ? (
@@ -47,7 +52,7 @@ export default function Tasks() {
                 <FaEdit />
               </button>
               <button
-                onClick={() => removeTask(index)}
+                // onClick={() => removeTask(index)}
                 className="text-red-500 hover:text-red-700 transition"
               >
                 <FaTrash />

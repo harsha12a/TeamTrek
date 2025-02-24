@@ -3,8 +3,9 @@ import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Users, Edit, PlusCircle, UserPlus } from "lucide-react";
 import { editGroupAsync, fetchGroups } from "../redux/groupSlice";
-import axios from "axios";
 import { useForm } from "react-hook-form";
+import { toast, ToastContainer } from 'react-toastify'
+import axios from "axios";
 
 function GroupDetails() {
   const { id } = useParams(); // Get group ID from URL
@@ -76,18 +77,27 @@ function GroupDetails() {
 
   // Handle group edit submission
   const handleSaveEdit = () => {
-    if (!editedGroup.name.trim()) return;
+  if (!editedGroup.name.trim()) return;
 
-    dispatch(editGroupAsync({ id, updatedGroup: editedGroup })); // Async update
+  dispatch(editGroupAsync({ id, updatedGroup: editedGroup }))
+    .unwrap()
+    .then(() => {
+      return dispatch(fetchGroups(user._id));
+    })
+    .catch((error) => {
+      toast.error(error, {
+        position: "top-center",
+        autoClose: 2000,
+        draggable: true,
+      });
+    })
+    .finally(() => setEditMode(false))
+};
 
-    dispatch(fetchGroups(user._id));
-    setEditMode(false);
-  };
 
   // Handle adding people
   const handleAddPeople = async (e) => {
-    e.preventDefault();
-    // const peopleArray = newPeople.split(",").map((p) => p.trim());
+    e.preventDefault()
 
     try {
       const response = await axios.put(
@@ -101,13 +111,24 @@ function GroupDetails() {
       setTags([]); // Clear tags
 
       dispatch(fetchGroups(user._id));
+      toast.success("Members added successfully",{
+        position: "top-center",
+        autoClose: 2000,
+        draggable: true
+      })
     } catch (error) {
       console.error("Error adding people:", error);
+      toast.error(error.response.data.message,{
+        position: "top-center",
+        autoClose: 2000,
+        draggable: true
+      })
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <ToastContainer />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
