@@ -39,9 +39,18 @@ const taskSchema = new mongoose.Schema({
     },
     files: [
         {
-            filename: String,
-            contentType: String,
-            data: Buffer
+            fileName: {
+                type: String,
+                required: true
+            },
+            filePath: {
+                type: String,
+                required: true
+            },
+            downloadUrl: {
+                type: String,
+                required: true
+            }
         }
     ]
 })

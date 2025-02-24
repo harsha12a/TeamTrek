@@ -22,70 +22,103 @@ const getUserTasks = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
+const createTask = async (req, res) => {
+    const { createdBy, assignedTo, groupId, files } = req.body;
 
-const createTask = async(req, res) => {
-    const userId = req.body.createdBy
     try {
-        const user = await User.findById(userId)
-        if(!user) return res.status(404).json({ message: 'User not found' })
-        const task = new Task(req.body)
-        const assignedUser = await User.findById(req.body.assignedTo)
-        if(req.body.assignedTo){
-            if(!assignedUser) return res.status(404).json({ message: 'Assigned user not found' })
-            task.assignedTo = req.body.assignedTo
+        // Check if the creator exists
+        const user = await User.findById(createdBy);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Validate assigned users
+        let assignedUsers = [];
+        if (assignedTo && assignedTo.length > 0) {
+            assignedUsers = await User.find({ _id: { $in: assignedTo } });
+            if (assignedUsers.length !== assignedTo.length) {
+                return res.status(404).json({ message: 'One or more assigned users not found' });
+            }
         }
-        if(req.body.groupId){
-            const group = await Group.findById(groupId)
-            if (!group) return res.status(404).json({ message: 'Group not found' })
-            task.groupId = req.body.groupId
-            group.tasks.push(newTask._id)
-            await group.save()
+
+        // Validate and format file data
+        const formattedFiles = files?.map(file => ({
+            fileName: file.fileName,
+            filePath: file.filePath,
+            downloadUrl: file.downloadUrl
+        })) || [];
+
+        // Create new task
+        const task = new Task({
+            ...req.body,
+            files: formattedFiles
+        });
+        const newTask = await task.save();
+
+        // Add task to creator's list
+        await User.findByIdAndUpdate(createdBy, { $addToSet: { tasks: newTask._id } });
+
+        // Add task to assigned users' lists
+        if (assignedUsers.length > 0) {
+            await User.updateMany(
+                { _id: { $in: assignedTo } },
+                { $addToSet: { tasks: newTask._id } }
+            );
         }
-        const newTask = await task.save()
-        user.tasks.push(newTask._id)
-        if(assignedUser){
-            assignedUser.tasks.push(newTask._id)
-            await assignedUser.save()
+
+        // Add task to group if groupId exists
+        if (groupId) {
+            const group = await Group.findById(groupId);
+            if (!group) return res.status(404).json({ message: 'Group not found' });
+
+            await Group.findByIdAndUpdate(groupId, { $addToSet: { tasks: newTask._id } });
         }
-        await user.save()
-        res.status(201).json(newTask)
+
+        res.status(201).json(newTask);
     } catch (error) {
-        res.status(400).json({ message: error.message })
+        res.status(400).json({ message: error.message });
     }
-}
+};
+
 
 const addMention = async (req, res) => {
-    const taskId = req.params.id;
-    const userId = req.body.assignedTo;
+    const taskId = req.params.id
+    const assignedUsernames = req.body.assignedTo
 
     try {
-        const task = await Task.findById(taskId).populate('groupId').populate('createdBy');
+        const task = await Task.findById(taskId).populate('groupId');
         if (!task) return res.status(404).json({ message: 'Task not found' });
 
-        const taskBy = await User.findById(task.createdBy);
-        if (!taskBy) return res.status(404).json({ message: 'Task creator not found' });
+        if (!task.groupId) return res.status(400).json({ message: 'Task must be linked to a group' });
 
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'Assigned user not found' });
+        const groupId = task.groupId._id.toString();
 
-        const groupId = task.groupId ? task.groupId._id.toString() : null;
-        if (!groupId) return res.status(404).json({ message: 'Group not found' });
-
-        // Ensure `groups` is an array before calling `.includes()`
-        const isUserInGroup = Array.isArray(user.groups) && user.groups.includes(groupId);
-        const isTaskByInGroup = Array.isArray(taskBy.groups) && taskBy.groups.includes(groupId);
-
-        if (!isUserInGroup || !isTaskByInGroup) {
-            return res.status(400).json({ message: 'Both users must be in the same group' });
+        if (!Array.isArray(assignedUsernames) || assignedUsernames.length === 0) {
+            return res.status(400).json({ message: 'Assigned usernames should be a non-empty array' });
         }
 
-        await Task.findByIdAndUpdate(taskId, { $addToSet: { assignedTo: userId } });
+        // Find user IDs based on usernames
+        const users = await User.find({ username: { $in: assignedUsernames } });
 
-        res.status(200).json({ message: "User mentioned successfully" });
+        if (users.length !== assignedUsernames.length) {
+            return res.status(404).json({ message: 'One or more usernames not found' });
+        }
+
+        const userIds = users.map(user => user._id); // Extract user IDs
+
+        // Ensure all assigned users are part of the task's group
+        const invalidUsers = users.filter(user => !Array.isArray(user.groups) || !user.groups.includes(groupId));
+        if (invalidUsers.length > 0) {
+            return res.status(400).json({ message: 'All assigned users must be part of the task\'s group' });
+        }
+
+        // Add user IDs to `assignedTo` without duplicates
+        await Task.findByIdAndUpdate(taskId, { $addToSet: { assignedTo: { $each: userIds } } });
+
+        res.status(200).json({ message: "Users assigned successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 
 module.exports = {

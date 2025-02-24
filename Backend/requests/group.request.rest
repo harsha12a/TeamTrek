@@ -28,3 +28,11 @@ Content-Type: application/json
     "createdBy": "67aa153d8e6f85e499bd467d",
     "dueDate": "2025-02-20"
 }
+
+###
+put http://localhost:4000/group/addPeople/67baf25a3a4923fe5907453b
+Content-Type: application/json
+
+{
+    "people": ["black"]
+}
