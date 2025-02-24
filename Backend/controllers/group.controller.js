@@ -16,28 +16,35 @@ const createGroup = async (req, res) => {
   const { name, description, people = [] } = req.body;
 
   try {
+    // Validate requesting user
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     if (!name) return res.status(400).json({ message: "Group name is required" });
 
-    const users = await User.find({ _id: { $in: people } });
+    // Convert usernames to ObjectIds
+    const users = await User.find({ username: { $in: people } });
+    const userIds = users.map((u) => u._id);
 
+    // Validate that all usernames were found
     if (users.length !== people.length) {
-      const foundUserIds = users.map((u) => u._id.toString());
-      const missingUsers = people.filter((id) => !foundUserIds.includes(id));
+      const foundUsernames = users.map((u) => u.username);
+      const missingUsers = people.filter((username) => !foundUsernames.includes(username));
       return res.status(400).json({ message: `User(s) not found: ${missingUsers.join(", ")}` });
     }
 
-    if (!people.includes(userId)) {
-      people.push(userId);
+    // Ensure creator's ID is included in the group
+    if (!userIds.includes(user._id)) {
+      userIds.push(user._id);
     }
 
-    const group = new Group({ name, description, people });
+    // Create group with user IDs
+    const group = new Group({ name, description, people: userIds });
     const newGroup = await group.save();
 
+    // Update users to include this group
     await User.updateMany(
-      { _id: { $in: people } },
+      { _id: { $in: userIds } },
       { $addToSet: { groups: newGroup._id } }
     );
 
@@ -46,6 +53,7 @@ const createGroup = async (req, res) => {
     res.status(500).json({ message: "Error creating group", error: error.message });
   }
 };
+;
 
 const editGroup = async (req, res) => {
   const groupId = req.params.id;

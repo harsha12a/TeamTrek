@@ -6,7 +6,7 @@ const { getTasks, getUserTasks, createTask, addMention } = require('../controlle
 
 router.get('/', getTasks)
 router.get('/user/:id', getUserTasks)
-router.post('/create', upload.single('file'), createTask)
+router.post('/create', upload.array('files', 5), createTask)
 router.put('/addMention/:id', addMention)
 
 module.exports = router

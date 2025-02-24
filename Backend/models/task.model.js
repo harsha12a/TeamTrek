@@ -37,6 +37,11 @@ const taskSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
     files: [
         {
             fileName: {

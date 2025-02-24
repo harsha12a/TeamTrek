@@ -22,8 +22,20 @@ const getUserTasks = async (req, res) => {
         res.status(500).json({ message: error.message })
     }
 }
+const getCorrectCloudinaryUrl = (file) => {
+    let fileUrl = file.path;
+
+    if (file.mimetype === 'application/pdf') {
+        // Ensure the URL is correctly formatted for raw files
+        fileUrl = fileUrl.replace('/image/upload/', '/raw/upload/');
+    }
+
+    // Add `fl_attachment:` to force download
+    return fileUrl.replace('/upload/', '/upload/fl_attachment:');
+};
+
 const createTask = async (req, res) => {
-    const { createdBy, assignedTo, groupId, files } = req.body;
+    const { createdBy, assignedTo, groupId } = req.body;
 
     try {
         // Check if the creator exists
@@ -39,12 +51,15 @@ const createTask = async (req, res) => {
             }
         }
 
-        // Validate and format file data
-        const formattedFiles = files?.map(file => ({
-            fileName: file.fileName,
-            filePath: file.filePath,
-            downloadUrl: file.downloadUrl
-        })) || [];
+        // Handle multiple file uploads
+        let formattedFiles = [];
+        if (req.files && req.files.length > 0) {
+            formattedFiles = req.files.map(file => ({
+                fileName: file.originalname,
+                filePath: file.path, // Cloudinary display URL
+                downloadUrl: getCorrectCloudinaryUrl(file) // Properly formatted download URL
+            }));
+        }
 
         // Create new task
         const task = new Task({
@@ -74,9 +89,11 @@ const createTask = async (req, res) => {
 
         res.status(201).json(newTask);
     } catch (error) {
+        console.error("Create Task Error:", error);
         res.status(400).json({ message: error.message });
     }
 };
+
 
 
 const addMention = async (req, res) => {
@@ -119,6 +136,23 @@ const addMention = async (req, res) => {
     }
 };
 
+// const sevenDaysAgo = new Date();
+// sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+// db.tasks.aggregate([
+//   {
+//     $match: {
+//       createdAt: { $gte: sevenDaysAgo } // Tasks created in the last 7 days
+//     }
+//   },
+//   {
+//     $group: {
+//       _id: { date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } },
+//       tasksCount: { $sum: 1 }
+//     }
+//   },
+//   { $sort: { "_id.date": 1 } }
+// ]);
 
 
 module.exports = {
