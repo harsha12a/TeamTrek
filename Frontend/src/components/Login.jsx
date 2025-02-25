@@ -15,25 +15,28 @@ function Login() {
 
   let dispatch = useDispatch()
   const onSubmit = (data) => {
-    axios.post('http://localhost:4000/user/login', data).then((res) => {
-      dispatch(login(res.data))
-      toast.success("Logged in successfully", {
+    toast.promise(
+      axios.post('http://localhost:4000/user/login', data)
+        .then((res) => {
+          dispatch(login(res.data));
+          setTimeout(() => navigate('/dashboard'), 2000);
+        }),
+      {
+        pending: "Logging in...",
+        success: "Logged in successfully! 🎉",
+        error: {
+          render({ data }) {
+            return data.response?.data?.message || "Login failed! ❌";
+          },
+        },
+      },
+      {
         position: "top-center",
         autoClose: 2000,
         closeOnClick: true,
         draggable: true,
-      })
-      setTimeout(() => {
-        navigate('/dashboard')
-      }, 2000)
-    }).catch((err) => {
-      toast.error(err.response?.data?.message || err.message, {
-        position: "top-center",
-        autoClose: 2000,
-        closeOnClick: true,
-        draggable: true
-      })
-    })
+      }
+    );    
   }
   return (
     <div

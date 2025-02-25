@@ -151,7 +151,7 @@ function GroupDetails() {
           </div>
 
           <button onClick={() => setEditMode(!editMode)}>
-            <Edit className="w-6 h-6 text-gray-600" />
+            <Edit className="w-6 h-6 text-gray-600 cursor-pointer" />
           </button>
         </div>
 

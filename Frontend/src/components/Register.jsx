@@ -15,27 +15,24 @@ function Register() {
       alert("Passwords do not match")
       return
     }
-    axios
-      .post("http://localhost:4000/user/register", data)
-      .then((res) => {
-        toast.success(res.data, {
-          position: "top-center",
-          autoClose: 2000,
-          closeOnClick: true,
-          draggable: true,
-        })
-        setTimeout(() => {
-          navigate("/login")
-        }, 2000)
-      })
-      .catch((err) => {
-        toast.success(err.response.data.message, {
-          position: "top-center",
-          autoClose: 2000,
-          closeOnClick: true,
-          draggable: true,
-        })
-      })
+    toast.promise(
+      axios.post("http://localhost:4000/user/register", data),
+      {
+        pending: "Creating user...",
+        success: "User created successfully 🎉",
+        error: {
+          render({ data }) {
+            return data.response?.data?.message || "Registration failed";
+          },
+        },
+      },
+      {
+        position: "top-center",
+        autoClose: 2000,
+        closeOnClick: true,
+        draggable: true
+      }
+    ).then(() => setTimeout(() => navigate("/login"), 2000));    
   }
   return (
     <div

@@ -5,6 +5,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchGroups } from "../redux/groupSlice";
 function CreateGroup() {
   const {
     register,
@@ -18,6 +20,7 @@ function CreateGroup() {
   const [inputValue, setInputValue] = useState("");
   const user = useSelector((state) => state.user.user);
   let navigate = useNavigate();
+  const dispatch = useDispatch()
   // Function to validate and submit the form
   const create = (obj) => {
     if (tags.length === 0) {
@@ -30,28 +33,24 @@ function CreateGroup() {
     clearErrors("people"); // Clear error when valid
     obj.people = tags;
     obj.tasks = [];
-    axios
-      .post(`http://localhost:4000/group/create/${user._id}`, obj)
-      .then(() => {
-        toast.success("Group created successfully", {
-          position: "top-center",
-          autoClose: 2000,
-          draggable: true,
-          closeOnClick: true,
-        });
-        setTimeout(() => {
-          navigate("/groups");
-        }, 2000);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error(err.response.data.message, {
-          position: "top-center",
-          autoClose: 2000,
-          draggable: true,
-          closeOnClick: true,
-        });
-      });
+    toast.promise(
+      axios.post(`http://localhost:4000/group/create/${user._id}`, obj),
+      {
+        pending: "Creating group...",
+        success: "Group created successfully 👌",
+        error: "Failed to create group 🤯",
+      },
+      {
+        position: "top-center",
+        autoClose: 2000,
+        closeOnClick: true,
+        pauseOnHover: true,
+      }
+    ).then(() => {
+      dispatch(fetchGroups(user._id))
+      setTimeout(() => navigate("/groups"), 2000);
+    });
+    
   };
 
   // Handle input change for user tagging
