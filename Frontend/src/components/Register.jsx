@@ -22,7 +22,7 @@ function Register() {
         success: "User created successfully 🎉",
         error: {
           render({ data }) {
-            return data.response?.data?.message || "Registration failed";
+            return data.response?.data?.message || "Registration failed"
           },
         },
       },
@@ -32,7 +32,7 @@ function Register() {
         closeOnClick: true,
         draggable: true
       }
-    ).then(() => setTimeout(() => navigate("/login"), 2000));    
+    ).then(() => setTimeout(() => navigate("/login"), 2000))    
   }
   return (
     <div

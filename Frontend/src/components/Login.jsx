@@ -18,15 +18,15 @@ function Login() {
     toast.promise(
       axios.post('http://localhost:4000/user/login', data)
         .then((res) => {
-          dispatch(login(res.data));
-          setTimeout(() => navigate('/dashboard'), 2000);
+          dispatch(login(res.data))
+          setTimeout(() => navigate('/dashboard'), 2000)
         }),
       {
         pending: "Logging in...",
         success: "Logged in successfully! 🎉",
         error: {
           render({ data }) {
-            return data.response?.data?.message || "Login failed! ❌";
+            return data.response?.data?.message || "Login failed! ❌"
           },
         },
       },
@@ -36,7 +36,7 @@ function Login() {
         closeOnClick: true,
         draggable: true,
       }
-    );    
+    )    
   }
   return (
     <div

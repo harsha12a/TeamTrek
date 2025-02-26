@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
-import { CheckCircle, Users, Shield, Zap } from 'lucide-react';
-import landing from '../assets/landing.png';
-import { useEffect, useRef } from 'react';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-import gsap from 'gsap';
+import { Link } from 'react-router-dom'
+import { CheckCircle, Users, Shield, Zap } from 'lucide-react'
+import landing from '../assets/landing.png'
+import { useEffect, useRef } from 'react'
+import ScrollTrigger from 'gsap/ScrollTrigger'
+import gsap from 'gsap'
 gsap.registerPlugin(ScrollTrigger)
 function Home() {
   let scrollink = useRef(null)
@@ -131,7 +131,7 @@ function Home() {
         </div>
       </section>
     </div>
-  );
+  )
 }
 
-export default Home;
+export default Home

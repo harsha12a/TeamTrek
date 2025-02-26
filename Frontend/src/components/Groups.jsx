@@ -1,19 +1,19 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import { fetchGroups } from "../redux/groupSlice";
-import { Users, UserPlus, UserCircle } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux"
+import { Link } from "react-router-dom"
+import { useEffect } from "react"
+import { fetchGroups } from "../redux/groupSlice"
+import { Users, UserPlus, UserCircle } from "lucide-react"
 
 function Groups() {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
-  const { groups, status, error } = useSelector((state) => state.groups);
+  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.user)
+  const { groups, status, error } = useSelector((state) => state.groups)
 
   useEffect(() => {
     if (user?._id) {
-      dispatch(fetchGroups(user._id));
+      dispatch(fetchGroups(user._id))
     }
-  }, [user, dispatch]);
+  }, [user, dispatch])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-violet-50">
@@ -107,7 +107,7 @@ function Groups() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Groups;
+export default Groups

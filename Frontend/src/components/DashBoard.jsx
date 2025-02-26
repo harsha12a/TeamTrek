@@ -1,8 +1,8 @@
-import { Link, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Plus } from "lucide-react";
+import { Link, Outlet } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { Plus } from "lucide-react"
 export default function DashBoard() {
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user.user)
   return (
     <div>
       {user ? (
@@ -35,5 +35,5 @@ export default function DashBoard() {
         </div>
       )}
     </div>
-  );
+  )
 }

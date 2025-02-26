@@ -1,46 +1,46 @@
-import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import gsap from "gsap";
-import logo from "../assets/logo.png";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/userSlice";
-import { FaUserCircle } from "react-icons/fa";
+import { useEffect, useState, useRef } from "react"
+import { Link } from "react-router-dom"
+import gsap from "gsap"
+import logo from "../assets/logo.png"
+import { useSelector, useDispatch } from "react-redux"
+import { logout } from "../redux/userSlice"
+import { FaUserCircle } from "react-icons/fa"
 
 function Header() {
-  const desktopLinks = useRef(null);
-  const menuLinks = useRef(null);
-  const [menu, setMenu] = useState(false);
-  const [dis, setDis] = useState({ sm: "hidden" });
-  const user = useSelector((state) => state.user.user);
-  const dispatch = useDispatch();
+  const desktopLinks = useRef(null)
+  const menuLinks = useRef(null)
+  const [menu, setMenu] = useState(false)
+  const [dis, setDis] = useState({ sm: "hidden" })
+  const user = useSelector((state) => state.user.user)
+  const dispatch = useDispatch()
   useEffect(() => {
-    setDis({ sm: menu ? "block" : "hidden" });
-  }, [menu]);
+    setDis({ sm: menu ? "block" : "hidden" })
+  }, [menu])
   useEffect(() => {
     if (desktopLinks.current) {
-      const links = desktopLinks.current.querySelectorAll("a");
+      const links = desktopLinks.current.querySelectorAll("a")
       if (links.length > 0) {
         gsap.fromTo(
           links,
           { opacity: 0, y: 50 },
           { opacity: 1, y: 0, duration: 1, stagger: 0.25 }
-        );
+        )
       }
     }
-  });
+  })
 
   useEffect(() => {
     if (menu && menuLinks.current) {
-      const links = menuLinks.current.querySelectorAll("a");
+      const links = menuLinks.current.querySelectorAll("a")
       if (links.length > 0) {
         gsap.fromTo(
           links,
           { opacity: 0, y: 50 },
           { opacity: 1, y: 0, duration: 1, stagger: 0.25 }
-        );
+        )
       }
     }
-  }, [menu]);
+  }, [menu])
 
   return (
     <div className="bg-white p-5">
@@ -95,8 +95,8 @@ function Header() {
                 <Link
                   className="cursor-pointer text-[17px] pt-20"
                   onClick={() => {
-                    setMenu(false);
-                    dispatch(logout());
+                    setMenu(false)
+                    dispatch(logout())
                   }}
                 >
                   Logout
@@ -144,8 +144,8 @@ function Header() {
               <Link
                 className="cursor-pointer text-[17px]"
                 onClick={() => {
-                  setMenu(false);
-                  dispatch(logout());
+                  setMenu(false)
+                  dispatch(logout())
                 }}
               >
                 Logout
@@ -166,7 +166,7 @@ function Header() {
         </div>
       </nav>
     </div>
-  );
+  )
 }
 
-export default Header;
+export default Header

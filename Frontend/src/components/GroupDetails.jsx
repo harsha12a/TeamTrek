@@ -1,98 +1,99 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { Users, Edit, PlusCircle, UserPlus } from "lucide-react";
-import { editGroupAsync, fetchGroups } from "../redux/groupSlice";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import { useSelector, useDispatch } from "react-redux"
+import { Users, Edit, PlusCircle, UserPlus, Plus } from "lucide-react"
+import { editGroupAsync, fetchGroups } from "../redux/groupSlice"
+import { useForm } from "react-hook-form"
 import { toast, ToastContainer } from 'react-toastify'
-import axios from "axios";
+import axios from "axios"
 
 function GroupDetails() {
-  const { id } = useParams(); // Get group ID from URL
+  const { id } = useParams() // Get group ID from URL
   const {
     formState: { errors },
     setError,
     clearErrors,
     trigger,
-  } = useForm();
-  const dispatch = useDispatch();
-  const groups = useSelector((state) => state.groups.groups); // Get groups from Redux
-  const user = useSelector((state) => state.user.user);
-  const [group, setGroup] = useState(null);
-  const [task, setTask] = useState(""); // Task input state
-  const [editMode, setEditMode] = useState(false);
-  const [editedGroup, setEditedGroup] = useState({ name: "", description: "" });
-  const [tags, setTags] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  } = useForm()
+  const dispatch = useDispatch()
+  const groups = useSelector((state) => state.groups.groups) // Get groups from Redux
+  const user = useSelector((state) => state.user.user)
+  const [group, setGroup] = useState(null)
+  const [task, setTask] = useState("") // Task input state
+  const [editMode, setEditMode] = useState(false)
+  const [editedGroup, setEditedGroup] = useState({ name: "", description: "" })
+  const [tags, setTags] = useState([])
+  const [inputValue, setInputValue] = useState("")
+  const [add, setAdd] = useState(false)
 
   useEffect(() => {
     if (groups) {
-      const selectedGroup = groups.find((g) => g._id === id);
-      setGroup(selectedGroup);
+      const selectedGroup = groups.find((g) => g._id === id)
+      setGroup(selectedGroup)
       setEditedGroup({
         name: selectedGroup?.name,
         description: selectedGroup?.description,
-      });
+      })
     }
-  }, [groups, id]);
+  }, [groups, id])
   useEffect(() => {
-    dispatch(fetchGroups(user?._id));
-  }, [dispatch, user]);
+    dispatch(fetchGroups(user?._id))
+  }, [dispatch, user])
 
   if (!group) {
-    return <p className="text-center text-gray-500">Group not found...</p>;
+    return <p className="text-center text-gray-500">Group not found...</p>
   }
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
+    setInputValue(e.target.value)
+  }
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
+      e.preventDefault()
       if (inputValue.trim() && !tags.includes(inputValue.trim())) {
-        setTags([...tags, inputValue.trim()]);
-        setInputValue("");
-        clearErrors("people"); // Remove error when a tag is added
-        trigger("people"); // Revalidate
+        setTags([...tags, inputValue.trim()])
+        setInputValue("")
+        clearErrors("people") // Remove error when a tag is added
+        trigger("people") // Revalidate
       }
     }
-  };
+  }
 
   // Remove a tagged user
   const handleDeleteTag = (tag) => {
-    const updatedTags = tags.filter((t) => t !== tag);
-    setTags(updatedTags);
+    const updatedTags = tags.filter((t) => t !== tag)
+    setTags(updatedTags)
     if (updatedTags.length === 0) {
       setError("people", {
         type: "manual",
         message: "At least one user must be tagged",
-      });
+      })
     }
-  };
+  }
   // Handle task submission
   const handleAddTask = () => {
-    if (!task.trim()) return;
-    console.log(`Task added: ${task}`);
-    setTask(""); // Clear input
-  };
+    if (!task.trim()) return
+    console.log(`Task added: ${task}`)
+    setTask("") // Clear input
+  }
 
   // Handle group edit submission
   const handleSaveEdit = () => {
-  if (!editedGroup.name.trim()) return;
+  if (!editedGroup.name.trim()) return
 
   dispatch(editGroupAsync({ id, updatedGroup: editedGroup }))
     .unwrap()
     .then(() => {
-      return dispatch(fetchGroups(user._id));
+      return dispatch(fetchGroups(user._id))
     })
     .catch((error) => {
       toast.error(error, {
         position: "top-center",
         autoClose: 2000,
         draggable: true,
-      });
+      })
     })
     .finally(() => setEditMode(false))
-};
+}
 
 
   // Handle adding people
@@ -105,26 +106,26 @@ function GroupDetails() {
         {
           people: tags,
         }
-      );
+      )
 
-      setGroup(response.data); // Update state with new people
-      setTags([]); // Clear tags
+      setGroup(response.data) // Update state with new people
+      setTags([]) // Clear tags
 
-      dispatch(fetchGroups(user._id));
+      dispatch(fetchGroups(user._id))
       toast.success("Members added successfully",{
         position: "top-center",
         autoClose: 2000,
         draggable: true
       })
     } catch (error) {
-      console.error("Error adding people:", error);
+      console.error("Error adding people:", error)
       toast.error(error.response.data.message,{
         position: "top-center",
         autoClose: 2000,
         draggable: true
       })
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
@@ -181,19 +182,15 @@ function GroupDetails() {
 
         {/* Members Section */}
         <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Members</h2>
-            {/* {group?.people?.map((member, index) => (
-              <li key={index} className="text-gray-700">
-                {member}
-              </li>
-            ))} */}
+          <h2 className="text-lg font-semibold mb-2 flex justify-between items-center">Members <Plus className="w-6 h-6 text-gray-600 cursor-pointer" onClick={()=>setAdd(!add)} /></h2>
             {
               group.people.join(', ')
             }
         </div>
 
         {/* Add People Section */}
-        <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
+        {
+          add && <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
           <h2 className="text-lg font-semibold mb-4">Add People</h2>
           <form onSubmit={handleAddPeople} className="flex">
             <div className="space-y-2 flex-1">
@@ -204,7 +201,7 @@ function GroupDetails() {
                     className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-blue-600"
                     onClick={() => handleDeleteTag(tag)}
                   >
-                    {tag} <span className="ml-2">&times;</span>
+                    {tag} <span className="ml-2">&times</span>
                   </span>
                 ))}
               </div>
@@ -231,6 +228,7 @@ function GroupDetails() {
             </button>
           </form>
         </div>
+        }
 
         {/* Task Section */}
         <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
@@ -254,7 +252,7 @@ function GroupDetails() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default GroupDetails;
+export default GroupDetails

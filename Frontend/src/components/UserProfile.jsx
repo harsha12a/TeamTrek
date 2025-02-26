@@ -1,8 +1,8 @@
-import { useSelector } from "react-redux";
-import { FaUserCircle, FaEnvelope, FaPhone } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux"
+import { FaUserCircle, FaEnvelope, FaPhone } from "react-icons/fa"
+import { Link } from "react-router-dom"
 function UserProfile() {
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user.user)
 
   return (
     <div className="h-[95vh] flex items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 p-6">
@@ -32,7 +32,7 @@ function UserProfile() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default UserProfile;
+export default UserProfile

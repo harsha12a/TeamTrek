@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
-import { FiUpload, FiCheckCircle } from "react-icons/fi";
-import { useDispatch, useSelector } from "react-redux";
-import { createTask, updateTask } from "../redux/taskSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { useLocation, useNavigate } from "react-router-dom"
+import { FiUpload, FiCheckCircle } from "react-icons/fi"
+import { useDispatch, useSelector } from "react-redux"
+import { createTask, updateTask } from "../redux/taskSlice"
+import { toast, ToastContainer } from "react-toastify"
 
 export default function AddTask() {
-  const location = useLocation();
-  let task = location.state?.task;
+  const location = useLocation()
+  let task = location.state?.task
   const {
     register,
     handleSubmit,
@@ -19,69 +19,69 @@ export default function AddTask() {
       priority: task?.priority || "medium",
       status: task?.status || "pending",
     },
-  });
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector((state) => state.user.user);
+  })
+  const [selectedFiles, setSelectedFiles] = useState([])
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const user = useSelector((state) => state.user.user)
 
   // Handle multiple file selection
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
-    setSelectedFiles(files);
-  };
+    const files = Array.from(event.target.files)
+    setSelectedFiles(files)
+  }
 
   const onSubmit = (data) => {
-    const formData = new FormData();
-    formData.append("createdBy", user._id);
-    formData.append("title", data.title);
-    formData.append("description", data.description || "");
-    formData.append("dueDate", data.dueDate);
-    formData.append("priority", data.priority);
-    formData.append("status", data.status);
+    const formData = new FormData()
+    formData.append("createdBy", user._id)
+    formData.append("title", data.title)
+    formData.append("description", data.description || "")
+    formData.append("dueDate", data.dueDate)
+    formData.append("priority", data.priority)
+    formData.append("status", data.status)
     if (selectedFiles.length > 5) {
       toast.error("Maximum 5 files are allowed", {
         position: "top-center",
         autoClose: 2000,
         draggable: true,
-      });
-      return;
+      })
+      return
     }
     selectedFiles.forEach((file) => {
-      formData.append("files", file); // Append multiple files
-    });
+      formData.append("files", file) // Append multiple files
+    })
 
-    dispatch(createTask(formData));
+    dispatch(createTask(formData))
     toast.success("Task created successfully", {
       position: "top-center",
       autoClose: 2000,
       draggable: true,
-    });
+    })
     setTimeout(() => {
-      navigate("../tasks");
-    }, 2000);
-  };
+      navigate("../tasks")
+    }, 2000)
+  }
   useEffect(() => {
     if (task) {
-      let newn = new Date(task?.dueDate).toISOString().split("T")[0];
-      setValue("dueDate", newn);
+      let newn = new Date(task?.dueDate).toISOString().split("T")[0]
+      setValue("dueDate", newn)
     }
-  }, [task, setValue]);
+  }, [task, setValue])
 
   const onEdit = (obj) => {
-    obj.createdAt = task.createdAt;
-    obj.files = task.files;
-    obj.createdBy = user._id;
-    dispatch(updateTask({ id: task._id, updatedTask: obj }));
+    obj.createdAt = task.createdAt
+    obj.files = task.files
+    obj.createdBy = user._id
+    dispatch(updateTask({ id: task._id, updatedTask: obj }))
     toast.success("Task updated successfully", {
       position: "top-center",
       autoClose: 2000,
       draggable: true,
-    });
+    })
     setTimeout(() => {
-      navigate("../tasks");
-    }, 2000);
-  };
+      navigate("../tasks")
+    }, 2000)
+  }
 
   return (
     <div className="flex w-auto sm:w-xl justify-center items-center min-h-screen p-4">
@@ -191,5 +191,5 @@ export default function AddTask() {
         </form>
       </div>
     </div>
-  );
+  )
 }
