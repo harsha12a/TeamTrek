@@ -45,8 +45,9 @@ function Header() {
   return (
     <div className="bg-white p-5">
       <nav className="flex h-[50px] justify-between flex-wrap items-center">
-        
-        <div className="flex items-center"><img src={logo} alt="" className="w-20" /><div className="text-xl font-semibold">WorkGrid</div>
+        <div className="flex items-center">
+          <img src={logo} alt="" className="w-20" />
+          <div className="text-xl font-semibold fonting">WorkGrid</div>
         </div>
 
         {/* Mobile Menu */}
@@ -122,7 +123,10 @@ function Header() {
               <Link className="cursor-pointer text-[17px]" to={"login"}>
                 Sign In
               </Link>
-              <Link className="cursor-pointer text-[17px] bg-blue-700 text-white py-2 px-5 rounded-md hover:bg-blue-800" to={"register"}>
+              <Link
+                className="cursor-pointer text-[17px] bg-blue-700 text-white py-2 px-5 rounded-md hover:bg-blue-800"
+                to={"register"}
+              >
                 Get Started
               </Link>
             </div>
@@ -140,8 +144,8 @@ function Header() {
               <Link
                 className="cursor-pointer text-[17px]"
                 onClick={() => {
-                  setMenu(false)
-                  dispatch(logout())
+                  setMenu(false);
+                  dispatch(logout());
                 }}
               >
                 Logout

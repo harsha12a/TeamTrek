@@ -1,16 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FiUpload, FiCheckCircle } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import { createTask } from "../redux/taskSlice";
-import {toast, ToastContainer} from 'react-toastify'
+import { createTask, updateTask } from "../redux/taskSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function AddTask() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: { priority: "medium", status: "pending" },
+  const location = useLocation();
+  let task = location.state?.task;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      priority: task?.priority || "medium",
+      status: task?.status || "pending",
+    },
   });
-
   const [selectedFiles, setSelectedFiles] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,12 +39,12 @@ export default function AddTask() {
     formData.append("dueDate", data.dueDate);
     formData.append("priority", data.priority);
     formData.append("status", data.status);
-    if(selectedFiles.length > 5){
-      toast.error('Maximum 5 files are allowed', {
-        position: 'top-center',
+    if (selectedFiles.length > 5) {
+      toast.error("Maximum 5 files are allowed", {
+        position: "top-center",
         autoClose: 2000,
-        draggable: true
-      })
+        draggable: true,
+      });
       return;
     }
     selectedFiles.forEach((file) => {
@@ -43,22 +52,48 @@ export default function AddTask() {
     });
 
     dispatch(createTask(formData));
-    toast.success('Task created successfully', {
-      position: 'top-center',
+    toast.success("Task created successfully", {
+      position: "top-center",
       autoClose: 2000,
-      draggable: true
-    })
+      draggable: true,
+    });
     setTimeout(() => {
       navigate("../tasks");
-    }, 2000)
+    }, 2000);
+  };
+  useEffect(() => {
+    if (task) {
+      let newn = new Date(task?.dueDate).toISOString().split("T")[0];
+      setValue("dueDate", newn);
+    }
+  }, [task, setValue]);
+
+  const onEdit = (obj) => {
+    obj.createdAt = task.createdAt;
+    obj.files = task.files;
+    obj.createdBy = user._id;
+    dispatch(updateTask({ id: task._id, updatedTask: obj }));
+    toast.success("Task updated successfully", {
+      position: "top-center",
+      autoClose: 2000,
+      draggable: true,
+    });
+    setTimeout(() => {
+      navigate("../tasks");
+    }, 2000);
   };
 
   return (
     <div className="flex w-auto sm:w-xl justify-center items-center min-h-screen p-4">
       <ToastContainer />
       <div className="bg-white shadow-xl rounded-sm p-8 w-full max-w-2xl">
-        <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">Create Task</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">
+          Create Task
+        </h1>
+        <form
+          onSubmit={handleSubmit(!task ? onSubmit : onEdit)}
+          className="space-y-4"
+        >
           {/* Task Name */}
           <div>
             <label className="block text-gray-700 font-medium">Task Name</label>
@@ -67,17 +102,23 @@ export default function AddTask() {
               {...register("title", { required: "Task name is required" })}
               className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter task name"
+              defaultValue={task?.title}
             />
-            {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
+            {errors.title && (
+              <p className="text-red-500 text-sm">{errors.title.message}</p>
+            )}
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-gray-700 font-medium">Description</label>
+            <label className="block text-gray-700 font-medium">
+              Description
+            </label>
             <textarea
               {...register("description")}
               className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter task description"
+              defaultValue={task?.description}
             ></textarea>
           </div>
 
@@ -89,7 +130,9 @@ export default function AddTask() {
               {...register("dueDate", { required: "Due date is required" })}
               className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
-            {errors.dueDate && <p className="text-red-500 text-sm">{errors.dueDate.message}</p>}
+            {errors.dueDate && (
+              <p className="text-red-500 text-sm">{errors.dueDate.message}</p>
+            )}
           </div>
 
           {/* Priority */}
@@ -119,20 +162,24 @@ export default function AddTask() {
           </div>
 
           {/* File Upload (Supports Multiple Files) */}
-          <div>
-            <label className="text-gray-700 font-medium flex items-center gap-2">
-              <FiUpload /> Attach Files
-            </label>
-            <input
-              type="file"
-              multiple // Allows multiple files
-              onChange={handleFileChange}
-              className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-            {selectedFiles.length > 0 && (
-              <p className="text-green-600 text-sm mt-1">{selectedFiles.length} file(s) selected</p>
-            )}
-          </div>
+          {!task && (
+            <div>
+              <label className="text-gray-700 font-medium flex items-center gap-2">
+                <FiUpload /> Attach Files
+              </label>
+              <input
+                type="file"
+                multiple // Allows multiple files
+                onChange={handleFileChange}
+                className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+              {selectedFiles.length > 0 && (
+                <p className="text-green-600 text-sm mt-1">
+                  {selectedFiles.length} file(s) selected
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Submit Button */}
           <button
