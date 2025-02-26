@@ -181,14 +181,15 @@ function GroupDetails() {
 
         {/* Members Section */}
         <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-4">Members</h2>
-          <ul className="space-y-2">
-            {group?.people?.map((member, index) => (
+          <h2 className="text-lg font-semibold mb-2">Members</h2>
+            {/* {group?.people?.map((member, index) => (
               <li key={index} className="text-gray-700">
                 {member}
               </li>
-            ))}
-          </ul>
+            ))} */}
+            {
+              group.people.join(', ')
+            }
         </div>
 
         {/* Add People Section */}
