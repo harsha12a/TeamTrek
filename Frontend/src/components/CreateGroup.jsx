@@ -47,8 +47,9 @@ function CreateGroup() {
         pauseOnHover: true,
       }
     ).then(() => {
-      dispatch(fetchGroups(user._id))
-      setTimeout(() => navigate("/groups"), 2000);
+      dispatch(fetchGroups(user._id)).then(() => {
+        navigate("/groups");
+      })
     });
     
   };

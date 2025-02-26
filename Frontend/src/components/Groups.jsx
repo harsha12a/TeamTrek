@@ -30,7 +30,7 @@ function Groups() {
             <p className="text-center text-gray-500">Loading groups...</p>
           ) : status === "failed" ? (
             <p className="text-center text-red-500">Error: {error}</p>
-          ) : user?.groups.length ? (
+          ) : groups.length ? (
             <div className="flex flex-col gap-6">
               <Link
                 to="/creategroup"

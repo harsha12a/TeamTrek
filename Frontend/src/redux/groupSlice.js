@@ -6,8 +6,8 @@ export const fetchGroups = createAsyncThunk(
   "groups/fetchGroups",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:4000/user/getGrp/${userId}`);
-      return Array.isArray(response.data) ? response.data : []; // Ensure response is always an array
+      const response = await axios.get(`http://localhost:4000/user/getGrp/${userId}`)
+      return Array.isArray(response.data) ? response.data : [response.data]; // Ensure response is always an array
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch groups");
     }
