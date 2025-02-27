@@ -1,12 +1,12 @@
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { Users } from "lucide-react"
-import axios from "axios"
-import { useSelector } from "react-redux"
-import { ToastContainer, toast } from "react-toastify"
-import { useNavigate } from "react-router-dom"
-import { useDispatch } from "react-redux"
-import { fetchGroups } from "../redux/groupSlice"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Users, X } from "lucide-react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchGroups } from "../redux/groupSlice";
 function CreateGroup() {
   const {
     register,
@@ -15,74 +15,75 @@ function CreateGroup() {
     setError,
     clearErrors,
     trigger,
-  } = useForm()
-  const [tags, setTags] = useState([])
-  const [inputValue, setInputValue] = useState("")
-  const user = useSelector((state) => state.user.user)
-  let navigate = useNavigate()
-  const dispatch = useDispatch()
+  } = useForm();
+  const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const user = useSelector((state) => state.user.user);
+  let navigate = useNavigate();
+  const dispatch = useDispatch();
   // Function to validate and submit the form
   const create = (obj) => {
     if (tags.length === 0) {
       setError("people", {
         type: "manual",
         message: "At least one user must be tagged",
-      })
-      return
+      });
+      return;
     }
-    clearErrors("people") // Clear error when valid
-    obj.people = tags
-    obj.tasks = []
-    toast.promise(
-      axios.post(`http://localhost:4000/group/create/${user._id}`, obj),
-      {
-        pending: "Creating group...",
-        success: "Group created successfully 👌",
-        error: "Failed to create group 🤯",
-      },
-      {
-        position: "top-center",
-        autoClose: 2000,
-        closeOnClick: true,
-        pauseOnHover: true,
-      }
-    ).then(() => {
-      dispatch(fetchGroups(user._id)).then(() => {
-        navigate("/groups")
-      })
-    })
-    
-  }
+    clearErrors("people"); // Clear error when valid
+    obj.people = tags;
+    obj.tasks = [];
+    toast
+      .promise(
+        axios.post(`http://localhost:4000/group/create/${user._id}`, obj),
+        {
+          pending: "Creating group...",
+          success: "Group created successfully 👌",
+          error: "Failed to create group 🤯",
+        },
+        {
+          position: "top-center",
+          autoClose: 2000,
+          closeOnClick: true,
+          pauseOnHover: true,
+        }
+      )
+      .then(() => {
+        dispatch(fetchGroups(user._id)).then(() => {
+          navigate("/groups");
+        });
+      });
+  };
 
   // Handle input change for user tagging
   const handleInputChange = (e) => {
-    setInputValue(e.target.value)
-  }
+    setInputValue(e.target.value);
+  };
 
   // Add user on Enter key press
   const handleKeyDown = (e) => {
     if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault()
+      e.preventDefault();
       if (inputValue.trim() && !tags.includes(inputValue.trim())) {
-        setTags([...tags, inputValue.trim()])
-        setInputValue("")
-        clearErrors("people") // Remove error when a tag is added
-        trigger("people") // Revalidate
+        setTags([...tags, inputValue.trim()]);
+        setInputValue("");
+        clearErrors("people"); // Remove error when a tag is added
+        trigger("people"); // Revalidate
       }
     }
-  }
+  };
 
   // Remove a tagged user
   const handleDeleteTag = (tag) => {
-    const updatedTags = tags.filter((t) => t !== tag)
-    setTags(updatedTags)
+    const updatedTags = tags.filter((t) => t !== tag);
+    setTags(updatedTags);
     if (updatedTags.length === 0) {
       setError("people", {
         type: "manual",
         message: "At least one user must be tagged",
-      })
+      });
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex justify-center items-center p-4">
@@ -153,10 +154,13 @@ function CreateGroup() {
               {tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-blue-600"
+                  className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm cursor-pointer hover:bg-blue-600 flex items-center"
                   onClick={() => handleDeleteTag(tag)}
                 >
-                  {tag} <span className="ml-2">&times</span>
+                  {tag}{" "}
+                  <span className="ml-2">
+                    <X className="w-5 h-5" />
+                  </span>
                 </span>
               ))}
             </div>
@@ -190,7 +194,7 @@ function CreateGroup() {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default CreateGroup
+export default CreateGroup;

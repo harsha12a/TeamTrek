@@ -14,6 +14,18 @@ export const fetchGroups = createAsyncThunk(
   }
 );
 
+export const fetchTasks = createAsyncThunk(
+  "groups/fetchTasks",
+  async (groupId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`http://localhost:4000/group/getTasks/${groupId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch tasks");
+    }
+  }
+)
+
 // Edit group (PUT request to /groups/edit/:id)
 export const editGroupAsync = createAsyncThunk(
   "groups/editGroup",
@@ -68,7 +80,14 @@ const groupSlice = createSlice({
         if (index !== -1) {
           state.groups[index] = action.payload;
         }
-      });
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.status = "succeeded"
+        const index = state.groups.findIndex((group) => group._id === action.payload._id);
+        if (index !== -1) {
+          state.groups[index] = action.payload;
+        }
+      })
   },
 });
 

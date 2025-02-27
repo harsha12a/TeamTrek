@@ -1,37 +1,37 @@
-import { motion } from "framer-motion"
-import { FaTrash, FaEdit, FaEye, FaDownload, FaFileAlt } from "react-icons/fa"
-import { useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useSelector, useDispatch } from "react-redux"
-import { deleteTask, fetchTasks } from "../redux/taskSlice"
+import { motion } from "framer-motion";
+import { FaTrash, FaEdit, FaEye, FaDownload, FaFileAlt } from "react-icons/fa";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteTask, fetchTasks } from "../redux/taskSlice";
 
 export default function Tasks() {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const tasks = useSelector((state) => state.tasks.tasks)
-  const user = useSelector((state) => state.user.user)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const tasks = useSelector((state) => state.tasks.tasks);
+  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
     if (user?._id) {
-      dispatch(fetchTasks(user._id))
+      dispatch(fetchTasks(user._id));
     }
-  }, [user?._id, dispatch])
+  }, [user?._id, dispatch]);
 
   const formatDate = (dateString) => {
-    if (!dateString) return "No due date"
-    const date = new Date(dateString)
+    if (!dateString) return "No due date";
+    const date = new Date(dateString);
     return `${date.getDate().toString().padStart(2, "0")}-${(
       date.getMonth() + 1
     )
       .toString()
-      .padStart(2, "0")}-${date.getFullYear()}`
-  }
+      .padStart(2, "0")}-${date.getFullYear()}`;
+  };
   const editTask = (task) => {
-    navigate("../add", { state: { task: task } })
-  }
+    navigate("../add", { state: { task: task } });
+  };
 
   return (
-    <div className="w-full mt-5 px-4 lg:px-20 max-w-4xl mx-auto">
+    <div className="w-full mt-5 px-2 lg:px-20 max-w-4xl mx-auto">
       {tasks.length ? (
         <h1 className="text-3xl font-bold text-center fonting text-gray-800 mb-6">
           Your Tasks
@@ -52,7 +52,7 @@ export default function Tasks() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="flex flex-col p-4 bg-white rounded-xl shadow-md border border-gray-200 sm:p-6"
+            className="flex flex-col p-4 bg-white rounded-sm shadow-md border border-gray-200 sm:p-6"
           >
             <h2 className="text-xl font-semibold text-gray-900">
               {task.title}
@@ -117,22 +117,22 @@ export default function Tasks() {
                           if (
                             !file.downloadUrl.startsWith(window.location.origin)
                           ) {
-                            e.preventDefault()
+                            e.preventDefault();
                             fetch(file.downloadUrl)
                               .then((res) => res.blob())
                               .then((blob) => {
-                                const url = URL.createObjectURL(blob)
-                                const a = document.createElement("a")
-                                a.href = url
-                                a.download = file.fileName || "download"
-                                document.body.appendChild(a)
-                                a.click()
-                                document.body.removeChild(a)
-                                URL.revokeObjectURL(url)
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = file.fileName || "download";
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
                               })
                               .catch((err) =>
                                 console.error("Download failed", err)
-                              )
+                              );
                           }
                         }}
                         className="text-green-500 hover:underline flex items-center gap-1"
@@ -155,8 +155,8 @@ export default function Tasks() {
               <button
                 className="text-red-500 hover:text-red-700 transition cursor-pointer"
                 onClick={() => {
-                  dispatch(deleteTask({ id: task._id }))
-                  dispatch(fetchTasks(user._id))
+                  dispatch(deleteTask({ id: task._id }));
+                  dispatch(fetchTasks(user._id));
                 }}
               >
                 <FaTrash size={18} />
@@ -166,5 +166,5 @@ export default function Tasks() {
         ))}
       </ul>
     </div>
-  )
+  );
 }
