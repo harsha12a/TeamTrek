@@ -19,20 +19,24 @@ Content-Type: application/json
 }
 
 ###
-put http://localhost:4000/group/addTask/67aa13458e6f85e499bd4678
+put http://localhost:4000/group/addTask/67c04f31674730542771d2e0
 Content-Type: application/json
 
 {
-    "title": "Task 8",
+    "title": "Task 81",
     "description": "Task 7 description",
-    "createdBy": "67aa153d8e6f85e499bd467d",
+    "createdBy": "67c04d08674730542771d2d2",
+    "assignedTo": ["red"],
     "dueDate": "2025-02-20"
 }
 
 ###
-put http://localhost:4000/group/addPeople/67baf25a3a4923fe5907453b
+put http://localhost:4000/group/addPeople/67c04f31674730542771d2e0
 Content-Type: application/json
 
 {
-    "people": ["black"]
+    "people": ["blue"]
 }
+
+###
+get http://localhost:4000/group/getTasks/67c04f31674730542771d2e0

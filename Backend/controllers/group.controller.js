@@ -114,20 +114,18 @@ const addPeople = async (req, res) => {
 
 const addTask = async (req, res) => {
   const groupId = req.params.id;
-  const { title, description, assignedTo } = req.body;
+  let { assignedTo } = req.body;
 
   try {
     const group = await Group.findById(groupId);
     if (!group) return res.status(404).json({ message: "Group not found" });
-
-    const assignedUsers = await User.find({ _id: { $in: assignedTo } });
+    const assignedUsers = await User.find({ username: { $in: assignedTo } }, "_id");
     if (assignedUsers.length !== assignedTo.length) {
       return res.status(400).json({ message: "One or more assigned users not found" });
     }
-
-    const newTask = new Task({ title, description, groupId, assignedTo });
-    const savedTask = await newTask.save();
-
+    let assignedUsersId = assignedUsers.map((user) => user._id);
+    const newTask = new Task({ groupId, ...req.body, assignedTo: assignedUsersId });
+    const savedTask = await newTask.save()
     await Group.findByIdAndUpdate(groupId, { $addToSet: { tasks: savedTask._id } });
 
     res.status(201).json({ message: "Task added successfully", task: savedTask });
@@ -136,10 +134,25 @@ const addTask = async (req, res) => {
   }
 };
 
+const getTasks = async (req, res) => {
+  const groupId = req.params.id;
+
+  try {
+    const tasks = await Group.findById(groupId).populate("tasks")
+    const users = await Promise.all(tasks.people.map((user) => User.findById(user, "username email")))
+    tasks.people = users
+    res.status(200).json(tasks)
+  }
+  catch (error) {
+    res.status(500).json({ message: "Error fetching tasks", error: error.message });
+  }
+}
+
 module.exports = {
   getGroups,
   createGroup,
   editGroup,
   addPeople,
   addTask,
+  getTasks
 };

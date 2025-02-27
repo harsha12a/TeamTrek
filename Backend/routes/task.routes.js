@@ -6,7 +6,7 @@ const { getTasks, getUserTasks, createTask, editTask, addMention, deleteTask } =
 
 router.get('/', getTasks)
 router.get('/user/:id', getUserTasks)
-router.post('/create', upload.array('files', 5), createTask)
+router.post('/create/:id?', upload.array('files', 5), createTask)
 router.put('/update/:id', editTask)
 router.delete('/delete/:id', deleteTask)
 router.put('/addMention/:id', addMention)
