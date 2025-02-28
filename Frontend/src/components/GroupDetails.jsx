@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Users, Edit, PlusCircle, UserPlus, Plus, X } from "lucide-react";
+import { Users, Edit, UserPlus, Plus, X, Minus } from "lucide-react";
 import { editGroupAsync, fetchTasks } from "../redux/groupSlice";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,11 +15,12 @@ function GroupDetails() {
     clearErrors,
     trigger,
   } = useForm();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const groups = useSelector((state) => state.groups.groups); // Get groups from Redux
   const user = useSelector((state) => state.user.user);
   const [group, setGroup] = useState(null);
-  const [task, setTask] = useState(""); // Task input state
+  // const [task, setTask] = useState(""); // Task input state
   const [editMode, setEditMode] = useState(false);
   const [editedGroup, setEditedGroup] = useState({ name: "", description: "" });
   const [tags, setTags] = useState([]);
@@ -37,7 +38,7 @@ function GroupDetails() {
     }
   }, [groups, id]);
   useEffect(() => {
-    dispatch(fetchTasks(id));
+    dispatch(fetchTasks(user._id));
   }, [dispatch, user, id]);
 
   if (!group) {
@@ -70,11 +71,11 @@ function GroupDetails() {
     }
   };
   // Handle task submission
-  const handleAddTask = () => {
-    if (!task.trim()) return;
-    console.log(`Task added: ${task}`);
-    setTask(""); // Clear input
-  };
+  // const handleAddTask = () => {
+  //   if (!task.trim()) return;
+  //   console.log(`Task added: ${task}`);
+  //   setTask(""); // Clear input
+  // };
 
   // Handle group edit submission
   const handleSaveEdit = () => {
@@ -82,7 +83,7 @@ function GroupDetails() {
     dispatch(editGroupAsync({ id, updatedGroup: editedGroup }))
       .unwrap()
       .then(() => {
-        return dispatch(fetchTasks(id));
+        return dispatch(fetchTasks(user._id));
       })
       .catch((error) => {
         toast.error(error, {
@@ -99,16 +100,15 @@ function GroupDetails() {
     e.preventDefault();
 
     try {
-      const response = await axios.put(
-        `http://localhost:4000/group/addPeople/${id}`,
-        {
-          people: tags,
-        }
-      );
-      setGroup(response.data.group); // Update state with new people
+      await axios.put(`http://localhost:4000/group/addPeople/${id}`, {
+        people: tags,
+      });
+      // setGroup(response.data.group); // Update state with new people
       setTags([]); // Clear tags
 
       dispatch(fetchTasks(user._id));
+      let res = groups.find((g) => g._id === id);
+      setGroup(res);
       toast.success("Members added successfully", {
         position: "top-center",
         autoClose: 2000,
@@ -125,7 +125,7 @@ function GroupDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-white to-purple-200">
       <ToastContainer />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
@@ -179,10 +179,17 @@ function GroupDetails() {
         <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
           <h2 className="text-lg font-semibold mb-2 flex justify-between items-center">
             Members{" "}
-            <Plus
-              className="w-6 h-6 text-gray-600 cursor-pointer"
-              onClick={() => setAdd(!add)}
-            />
+            {add ? (
+              <Minus
+                className="w-6 h-6 text-gray-600 cursor-pointer"
+                onClick={() => setAdd(!add)}
+              />
+            ) : (
+              <Plus
+                className="w-6 h-6 text-gray-600 cursor-pointer"
+                onClick={() => setAdd(!add)}
+              />
+            )}
           </h2>
           {group.people.map((person) => person.username).join(", ")}
         </div>
@@ -230,23 +237,135 @@ function GroupDetails() {
         )}
 
         {/* Task Section */}
-        <div className="mt-6 bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-lg font-semibold mb-4">Tasks</h2>
-          <div className="flex">
-            <input
-              type="text"
-              value={task}
-              onChange={(e) => setTask(e.target.value)}
-              className="flex-1 border p-2 rounded-md"
-              placeholder="Add a new task..."
-            />
-            <button
-              onClick={handleAddTask}
-              className="ml-2 bg-green-500 text-white px-3 py-2 rounded-md flex items-center"
-            >
-              <PlusCircle className="w-5 h-5 mr-1" />
-              Add
-            </button>
+        <div className="bg-white p-6 rounded-xl shadow-md mt-6">
+          <div className="flex justify-between items center">
+            <div className="text-xl font-semibold text-center mb-4">Tasks</div>
+            <div>
+              <Plus
+                className="cursor-pointer"
+                onClick={() =>
+                  navigate("./tasks", { state: { people: group.people } })
+                }
+              />
+            </div>
+          </div>
+          <div className="space-y-4">
+            {group.tasks.length === 0 && <p>No tasks found.</p>}
+            {group.tasks.map((task) => (
+              <div
+                key={task._id}
+                className="p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition duration-200"
+              >
+                <div className="text-lg font-medium text-gray-800">
+                  {task.title}
+                </div>
+                <div className="text-sm text-gray-600 mb-2">
+                  {task.description}
+                </div>
+
+                <div className="flex flex-wrap gap-2 text-sm">
+                  <span
+                    className={`px-2 py-1 rounded-sm font-medium ${
+                      task.status === "Completed"
+                        ? "bg-green-200 text-green-700"
+                        : task.status === "Pending"
+                        ? "bg-yellow-200 text-yellow-700"
+                        : "bg-red-200 text-red-700"
+                    }`}
+                  >
+                    {task.status}
+                  </span>
+                  <span
+                    className={`px-2 py-1 rounded-sm font-medium ${
+                      task.priority === "High"
+                        ? "bg-red-200 text-red-700"
+                        : task.priority === "Medium"
+                        ? "bg-yellow-200 text-yellow-700"
+                        : "bg-green-200 text-green-700"
+                    }`}
+                  >
+                    Priority: {task.priority}
+                  </span>
+                </div>
+
+                <div className="text-sm text-gray-500 mt-2">
+                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                </div>
+
+                <div className="mt-3 text-sm">
+                  <strong>Assigned To:</strong>{" "}
+                  <span className="text-gray-700">
+                    {task.assignedTo
+                      .map((person) => person.username)
+                      .join(", ")}
+                  </span>
+                </div>
+
+                <div className="text-sm text-gray-500">
+                  <strong>Created By:</strong> {task.createdBy.username}
+                </div>
+                {task.files.length > 0 && (
+                  <div className="mt-3">
+                    <strong className="text-sm text-gray-700">Files:</strong>
+                    <div className="mt-2 space-y-2">
+                      {task.files.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-gray-100 p-2 rounded-lg"
+                        >
+                          <span className="text-sm text-gray-700 truncate w-40">
+                            {file.filename}
+                          </span>
+                          <div className="flex gap-2">
+                            <a
+                              href={file.viewUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 text-sm hover:underline"
+                            >
+                              View
+                            </a>
+                            <a
+                              href={file.downloadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              download={file.name || "download"}
+                              onClick={(e) => {
+                                if (
+                                  !file.downloadUrl.startsWith(
+                                    window.location.origin
+                                  )
+                                ) {
+                                  e.preventDefault();
+                                  fetch(file.downloadUrl)
+                                    .then((res) => res.blob())
+                                    .then((blob) => {
+                                      const url = URL.createObjectURL(blob);
+                                      const a = document.createElement("a");
+                                      a.href = url;
+                                      a.download = file.fileName || "download";
+                                      document.body.appendChild(a);
+                                      a.click();
+                                      document.body.removeChild(a);
+                                      URL.revokeObjectURL(url);
+                                    })
+                                    .catch((err) =>
+                                      console.error("Download failed", err)
+                                    );
+                                }
+                              }}
+                              className="text-green-500 text-sm hover:underline"
+                            >
+                              Download
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>

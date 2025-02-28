@@ -78,15 +78,16 @@ const groupSlice = createSlice({
       .addCase(editGroupAsync.fulfilled, (state, action) => {
         const index = state.groups.findIndex((group) => group._id === action.payload._id);
         if (index !== -1) {
-          state.groups[index] = action.payload;
+          state.groups[index] = {
+            ...state.groups[index],
+            title: action.payload.title,
+            description: action.payload.description
+          }
         }
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.status = "succeeded"
-        const index = state.groups.findIndex((group) => group._id === action.payload._id);
-        if (index !== -1) {
-          state.groups[index] = action.payload;
-        }
+        state.groups = action.payload
       })
   },
 });

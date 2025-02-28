@@ -6,7 +6,7 @@ function RootLayout() {
   return (
     <div>
       <Header />
-      <div className='h-[min(95vh, 100%)]'>
+      <div className='min-h-screen'>
         <Outlet />
       </div>
       <Footer />

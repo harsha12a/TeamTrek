@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { fetchGroups } from "../redux/groupSlice";
+import { fetchTasks } from "../redux/groupSlice";
 import { Users, UserPlus, UserCircle } from "lucide-react";
 
 function Groups() {
@@ -11,12 +11,12 @@ function Groups() {
 
   useEffect(() => {
     if (user?._id) {
-      dispatch(fetchGroups(user._id));
+      dispatch(fetchTasks(user._id));
     }
   }, [user, dispatch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-violet-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white to-violet-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-center mb-12">
           <Users className="w-12 h-12 text-blue-600 mr-4" strokeWidth={1.5} />

@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { fetchGroups } from "../redux/groupSlice";
+import { fetchTasks } from "../redux/groupSlice";
 function CreateGroup() {
   const {
     register,
@@ -49,7 +49,7 @@ function CreateGroup() {
         }
       )
       .then(() => {
-        dispatch(fetchGroups(user._id)).then(() => {
+        dispatch(fetchTasks(user._id)).then(() => {
           navigate("/groups");
         });
       });
