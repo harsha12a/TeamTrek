@@ -165,27 +165,41 @@ const addTask = async (req, res) => {
 };
 
 const getTasks = async (req, res) => {
-  const groupId = req.params.id;
+  const userId = req.params.id;
 
   try {
-    const tasks = await Group.findById(groupId).populate("tasks");
-    const users = await Promise.all(
-      tasks.people.map((user) => User.findById(user, "username email"))
-    );
-    tasks.people = users;
-    await Promise.all(
-      tasks.tasks.map(async (task) => {
-        task.assignedTo = await Promise.all(
-          task.assignedTo.map((user) => User.findById(user, "username email"))
+    // Fetch user and groups
+    const user = await User.findById(userId, "groups").populate("groups");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Fetch tasks for each group the user is in
+    const groupTasks = await Promise.all(
+      user.groups.map(async (groupId) => {
+        const group = await Group.findById(groupId).populate("tasks");
+        if (!group) return null; // Skip if group not found
+
+        // Populate people in the group
+        group.people = await Promise.all(
+          group.people.map((user) => User.findById(user, "username email"))
         );
-        task.createdBy = await User.findById(task.createdBy, "username email");
+
+        // Populate assignedTo and createdBy for each task
+        await Promise.all(
+          group.tasks.map(async (task) => {
+            task.assignedTo = await Promise.all(
+              task.assignedTo.map((user) => User.findById(user, "username email"))
+            );
+            task.createdBy = await User.findById(task.createdBy, "username email");
+          })
+        );
+
+        return group;
       })
     );
-    res.status(200).json(tasks);
+
+    res.status(200).json(groupTasks.filter((group) => group !== null)); // Remove null groups
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching tasks", error: error.message });
+    res.status(500).json({ message: "Error fetching tasks", error: error.message });
   }
 };
 
