@@ -16,7 +16,7 @@ function Register() {
       return
     }
     toast.promise(
-      axios.post("http://localhost:4000/user/register", data),
+      axios.post("https://work-grid.vercel.app/user/register", data),
       {
         pending: "Creating user...",
         success: "User created successfully 🎉",

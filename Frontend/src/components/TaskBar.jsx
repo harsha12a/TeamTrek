@@ -18,7 +18,7 @@ const TaskBar = () => {
     useEffect(() => {
         const fetchTaskData = async () => {
             try {
-                const response = await axios.get(`http://localhost:4000/task/getDayWiseTaskCount/${userId}`);
+                const response = await axios.get(`https://work-grid.vercel.app/task/getDayWiseTaskCount/${userId}`);
                 const { dayWiseCounts } = response.data;
 
                 // Prepare data for the chart

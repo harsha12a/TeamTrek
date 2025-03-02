@@ -125,7 +125,7 @@ function GroupDetails() {
     e.preventDefault();
 
     try {
-      await axios.put(`http://localhost:4000/group/addPeople/${id}`, {
+      await axios.put(`https://work-grid.vercel.app/group/addPeople/${id}`, {
         people: tags,
       });
       // setGroup(response.data.group); // Update state with new people

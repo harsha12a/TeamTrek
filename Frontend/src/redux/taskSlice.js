@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/task";
+const API_URL = "https://work-grid.vercel.app/task";
 
 // Fetch tasks
 export const fetchTasks = createAsyncThunk(

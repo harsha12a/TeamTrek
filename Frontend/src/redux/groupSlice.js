@@ -6,7 +6,7 @@ export const fetchGroups = createAsyncThunk(
   "groups/fetchGroups",
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:4000/user/getGrp/${userId}`)
+      const response = await axios.get(`https://work-grid.vercel.app/user/getGrp/${userId}`)
       return Array.isArray(response.data) ? response.data : [response.data]; // Ensure response is always an array
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch groups");
@@ -18,7 +18,7 @@ export const fetchTasks = createAsyncThunk(
   "groups/fetchTasks",
   async (groupId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:4000/group/getTasks/${groupId}`);
+      const response = await axios.get(`https://work-grid.vercel.app/group/getTasks/${groupId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch tasks");
@@ -31,7 +31,7 @@ export const editGroupAsync = createAsyncThunk(
   "groups/editGroup",
   async ({ id, updatedGroup }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`http://localhost:4000/group/edit/${id}`, updatedGroup);
+      const response = await axios.put(`https://work-grid.vercel.app/group/edit/${id}`, updatedGroup);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || "Failed to update group");

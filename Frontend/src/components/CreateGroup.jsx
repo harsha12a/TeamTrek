@@ -35,7 +35,7 @@ function CreateGroup() {
     obj.tasks = [];
     toast
       .promise(
-        axios.post(`http://localhost:4000/group/create/${user._id}`, obj),
+        axios.post(`https://work-grid.vercel.app/group/create/${user._id}`, obj),
         {
           pending: "Creating group...",
           success: "Group created successfully 👌",

@@ -16,7 +16,7 @@ function Login() {
   let dispatch = useDispatch()
   const onSubmit = (data) => {
     toast.promise(
-      axios.post('http://localhost:4000/user/login', data)
+      axios.post('https://work-grid.vercel.app/user/login', data)
         .then((res) => {
           dispatch(login(res.data))
           setTimeout(() => navigate('/dashboard'), 2000)
