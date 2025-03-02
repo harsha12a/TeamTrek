@@ -1,7 +1,7 @@
 const Group = require("../models/group.model");
 const User = require("../models/user.model");
 const Task = require("../models/task.model");
-
+const sendMail = require("../config/nodeMailer");
 const getGroups = async (req, res) => {
   try {
     const groups = await Group.find().populate("people", "name email");
@@ -54,7 +54,30 @@ const createGroup = async (req, res) => {
       { _id: { $in: userIds } },
       { $addToSet: { groups: newGroup._id } }
     );
-
+    if (users.length > 0) {
+      users.forEach(async (groupUser) => {
+        const emailContent = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <img src="https://example.com/logo.png" alt="Your App Logo" style="display: block; margin: 0 auto; max-width: 200px;">
+            <h1>WorkGrid</h1>
+            <h2 style="color: #007bff;">Group Invitation</h2>
+            <h3 style="color: #333;">You've been added to a group!</h3>
+            <p>Hi <strong>${groupUser.name}</strong>,</p>
+            <p>You have been added to the group <strong>${name}</strong> by ${user.username}.</p>
+            <p style="margin: 10px 0;">Description: ${description || "No description provided."}</p>
+            <a href="https://your-app-link.com/groups/${newGroup._id}" style="display: inline-block; padding: 10px 15px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">View Group</a>
+            <p style="margin-top: 20px;">Regards,<br/>Your App Team</p>
+          </div>
+        `;
+        
+        // Send email to each user
+        await sendMail(
+          groupUser.email,
+          `You've been added to the group: ${name}`,
+          emailContent
+        );
+      });
+    }
     res.status(201).json(newGroup);
   } catch (error) {
     res
