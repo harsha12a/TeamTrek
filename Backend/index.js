@@ -7,7 +7,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors({
-    origin: '*'
+    origin: 'https://workgrid-five.vercel.app'
 }))
 
 app.get('/', (req, res) => {
