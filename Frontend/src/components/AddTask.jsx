@@ -72,16 +72,25 @@ export default function AddTask() {
     obj.createdAt = task.createdAt
     obj.files = task.files
     obj.createdBy = user._id
-    dispatch(updateTask({ id: task._id, updatedTask: obj }))
-    toast.success("Task updated successfully", {
-      position: "top-center",
-      autoClose: 2000,
-      draggable: true,
+
+    toast.promise(
+        dispatch(updateTask({ id: task._id, updatedTask: obj })).unwrap(),
+        {
+            pending: "Updating task...",
+            success: "Task updated successfully! 🎉",
+            error: "Failed to update task. Please try again. ❌",
+        },
+        {
+            position: "top-center",
+            autoClose: 2000,
+            draggable: true,
+        }
+    ).then(() => {
+        setTimeout(() => {
+            navigate("../tasks")
+        }, 2000)
     })
-    setTimeout(() => {
-      navigate("../tasks")
-    }, 2000)
-  }
+}
 
   return (
     <div className="flex w-auto sm:w-xl justify-center items-center min-h-screen p-4">
