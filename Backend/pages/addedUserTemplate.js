@@ -81,7 +81,7 @@ const taskTemplate = (taggedUser, task) => `
         <p>You have been tagged in <strong>${task?.title || 'a task'}</strong>.</p>
         <p>Description: ${task?.description || "No description available."}</p>
         <div class="btn-container">
-            <a href="https://workgrid.netlify.app/tasks/${task?.id || ''}" class="btn" aria-label="View Task Details">View Task</a>
+            <a href="https://workgrid-five.vercel.app/tasks/${task?.id || ''}" class="btn" aria-label="View Task Details">View Task</a>
         </div>
     </div>
     <div class="footer">

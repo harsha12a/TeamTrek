@@ -29,7 +29,7 @@ module.exports = (task) => `
             <p>Due Date: ${new Date(task.dueDate).toLocaleDateString()}</p>
             <p>${task.description || "No description available."}</p>
             <div class="btn-container">
-                <a href="https://workgrid.netlify.app/tasks" class="btn" style="color: #fff;">View Task</a>
+                <a href="https://workgrid-five.vercel.app/tasks" class="btn" style="color: #fff;">View Task</a>
             </div>
         </div>
     </div>

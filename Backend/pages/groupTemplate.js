@@ -83,7 +83,7 @@ const groupTemplate = ({ groupUser, groupName, groupId }) => `
         <p>Feel free to explore and collaborate with your team members!</p>
     </div>
     <div class="btn-container">
-        <a href="https://workgrid.netlify.app/groups/${groupId}" class="btn">
+        <a href="https://workgrid-five.vercel.app/groups/${groupId}" class="btn">
             View Group
         </a>
     </div>
