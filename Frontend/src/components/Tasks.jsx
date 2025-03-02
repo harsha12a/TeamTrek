@@ -1,21 +1,33 @@
 import { motion } from "framer-motion";
 import { FaTrash, FaEdit, FaEye, FaDownload, FaFileAlt } from "react-icons/fa";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteTask, fetchTasks } from "../redux/taskSlice";
+import { Search } from "lucide-react";
 
 export default function Tasks() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const tasks = useSelector((state) => state.tasks.tasks);
   const user = useSelector((state) => state.user.user);
-
+  const [search, setSearch] = useState("")
+  const [filteredTasks, setFilteredTasks] = useState([])
   useEffect(() => {
     if (user?._id) {
       dispatch(fetchTasks(user._id));
     }
   }, [user?._id, dispatch]);
+
+  useEffect(() => {
+    // Filter tasks based on search query
+    const filtered = tasks.filter(
+      (task) =>
+        task.title.toLowerCase().includes(search.toLowerCase()) ||
+        task.description.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredTasks(filtered);
+  }, [search, tasks]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "No due date";
@@ -32,7 +44,19 @@ export default function Tasks() {
 
   return (
     <div className="w-full mt-5 px-2 lg:px-20 max-w-4xl mx-auto">
-      {tasks.length ? (
+      <div className="flex items-center justify-center mb-8">
+          <div className="relative bg-blue-200 w-full max-w-md">
+            <input
+              type="text"
+              placeholder="Search groups..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-400"
+            />
+            <Search className="absolute right-3 top-2.5 text-gray-500" />
+          </div>
+        </div>
+      {filteredTasks.length ? (
         <h1 className="text-3xl font-bold text-center fonting text-gray-800 mb-6">
           Your Tasks
         </h1>
@@ -46,7 +70,7 @@ export default function Tasks() {
         </h1>
       )}
       <ul className="space-y-4">
-        {tasks.map((task, index) => (
+        {filteredTasks.map((task, index) => (
           <motion.li
             key={index}
             initial={{ opacity: 0, y: -10 }}

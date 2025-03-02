@@ -93,11 +93,11 @@ export default function AddTask() {
 }
 
   return (
-    <div className="flex w-auto sm:w-xl justify-center items-center min-h-screen p-4">
+    <div className="flex w-[95vw] sm:w-xl justify-center items-center min-h-screen p-4">
       <ToastContainer />
       <div className="bg-white shadow-xl rounded-sm p-8 w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">
-          Create Task
+          {task?"Edit":"Create"} Task
         </h1>
         <form
           onSubmit={handleSubmit(!task ? onSubmit : onEdit)}
@@ -195,7 +195,7 @@ export default function AddTask() {
             type="submit"
             className="w-full flex items-center justify-center gap-2 bg-blue-500 text-white p-3 rounded-lg shadow-md hover:bg-blue-600 transition"
           >
-            <FiCheckCircle /> Add Task
+            <FiCheckCircle /> {task?"Update":"Add"} Task
           </button>
         </form>
       </div>

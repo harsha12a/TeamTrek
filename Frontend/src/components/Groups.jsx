@@ -1,19 +1,33 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchTasks } from "../redux/groupSlice";
-import { Users, UserPlus, UserCircle } from "lucide-react";
+import { Users, UserPlus, UserCircle, Search } from "lucide-react";
 
 function Groups() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const { groups, status, error } = useSelector((state) => state.groups);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search input
+  const [filteredGroups, setFilteredGroups] = useState([]); // State for filtered groups
 
   useEffect(() => {
     if (user?._id) {
       dispatch(fetchTasks(user._id));
     }
   }, [user, dispatch]);
+
+  // Filter groups based on search term
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredGroups(groups);
+    } else {
+      const filtered = groups.filter((group) =>
+        group.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredGroups(filtered);
+    }
+  }, [searchTerm, groups]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-white to-violet-200">
@@ -25,12 +39,26 @@ function Groups() {
           </h1>
         </div>
 
+        {/* Search bar outside the group border */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="relative bg-blue-200 w-full max-w-md">
+            <input
+              type="text"
+              placeholder="Search groups..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-blue-400"
+            />
+            <Search className="absolute right-3 top-2.5 text-gray-500" />
+          </div>
+        </div>
+
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-200 p-8">
           {status === "loading" ? (
             <p className="text-center text-gray-500">Loading groups...</p>
           ) : status === "failed" ? (
             <p className="text-center text-red-500">Error: {error}</p>
-          ) : groups.length ? (
+          ) : filteredGroups.length ? (
             <div className="flex flex-col gap-6">
               <Link
                 to="/creategroup"
@@ -38,7 +66,7 @@ function Groups() {
               >
                 Create Group
               </Link>
-              {groups?.map((group) => (
+              {filteredGroups.map((group) => (
                 <div
                   key={group._id}
                   className="group bg-white w-full rounded-sm shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 hover:border-blue-400"
@@ -82,11 +110,10 @@ function Groups() {
                 />
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                No Groups Yet
+                No Groups Found
               </h2>
               <p className="text-gray-600 mb-12 max-w-md">
-                Start collaborating with others by creating a new group or
-                joining an existing one.
+                Try adjusting your search or create a new group to get started.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md">
                 <Link
