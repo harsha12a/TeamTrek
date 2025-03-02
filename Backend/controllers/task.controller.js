@@ -34,8 +34,8 @@ const getCorrectCloudinaryUrl = (file) => {
 };
 
 const createTask = async (req, res) => {
-  const { createdBy, assignedTo, groupId } = req.body;
-
+  const { createdBy, groupId } = req.body;
+  let { assignedTo } = req.body;
   try {
     // Check if the creator exists
     const user = await User.findById(createdBy);
@@ -43,13 +43,16 @@ const createTask = async (req, res) => {
 
     // Validate assigned users
     let assignedUsers = [];
+    let assignedToId = []
     if (assignedTo && assignedTo.length > 0) {
-      assignedUsers = await User.find({ _id: { $in: assignedTo } });
+      assignedTo = JSON.parse(assignedTo)
+      assignedUsers = await User.find({ username: { $in: assignedTo } });
       if (assignedUsers.length !== assignedTo.length) {
         return res
           .status(404)
           .json({ message: "One or more assigned users not found" });
       }
+      assignedToId = assignedUsers.map((user) => user._id);
     }
 
     // Handle multiple file uploads
@@ -65,22 +68,25 @@ const createTask = async (req, res) => {
     // Create new task
     const task = new Task({
       ...req.body,
+      assignedTo: assignedToId,
       files: formattedFiles,
     });
     const newTask = await task.save();
 
     // Add task to creator's list
-    await User.findByIdAndUpdate(createdBy, {
-      $addToSet: { tasks: newTask._id },
-    });
+    if(!groupId){
+      await User.findByIdAndUpdate(createdBy, {
+        $addToSet: { tasks: newTask._id },
+      });
+    }
 
     // Add task to assigned users' lists
-    if (assignedUsers.length > 0) {
-      await User.updateMany(
-        { _id: { $in: assignedTo } },
-        { $addToSet: { tasks: newTask._id } }
-      );
-    }
+    // if (assignedUsers.length > 0) {
+    //   await User.updateMany(
+    //     { _id: { $in: assignedTo } },
+    //     { $addToSet: { tasks: newTask._id } }
+    //   );
+    // }
 
     // Add task to group if groupId exists
     if (groupId) {
@@ -101,8 +107,24 @@ const createTask = async (req, res) => {
 
 const editTask = async (req, res) => {
   const taskId = req.params.id;
+  const {assignedTo} = req.body
   try {
-    const result = await Task.findByIdAndUpdate(taskId, req.body, {
+    let assignedUsers = [];
+    let assignedToId = []
+    if (assignedTo && assignedTo.length > 0) {
+      // assignedTo = JSON.parse(assignedTo)
+      assignedUsers = await User.find({ username: { $in: assignedTo } });
+      if (assignedUsers.length !== assignedTo.length) {
+        return res
+          .status(404)
+          .json({ message: "One or more assigned users not found" });
+      }
+      assignedToId = assignedUsers.map((user) => user._id);
+    }
+    const result = await Task.findByIdAndUpdate(taskId, {
+      ...req.body,
+      assignedTo: assignedToId
+    }, {
       new: true,
     });
     res.status(200).json(result);
