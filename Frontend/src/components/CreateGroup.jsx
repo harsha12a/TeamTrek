@@ -39,7 +39,14 @@ function CreateGroup() {
         {
           pending: "Creating group...",
           success: "Group created successfully 👌",
-          error: "Failed to create group 🤯",
+          error: {
+            render({ data }) {
+              return (
+                data.response.data.message ||
+                "Something went wrong, please try again"
+              );
+            }
+          },
         },
         {
           position: "top-center",
@@ -50,7 +57,9 @@ function CreateGroup() {
       )
       .then(() => {
         dispatch(fetchTasks(user._id)).then(() => {
-          navigate("/groups");
+          setTimeout(() => {
+            navigate("/groups");
+          }, 2000)
         });
       });
   };

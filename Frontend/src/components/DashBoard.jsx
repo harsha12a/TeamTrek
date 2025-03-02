@@ -6,7 +6,7 @@ export default function DashBoard() {
   return (
     <div>
       {user ? (
-        <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-white to-gray-500 p-4">
+        <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-white to-[#00719c] p-4">
           <nav className="flex gap-4 mb-5 flex-wrap justify-center">
             <Link
               to="add"

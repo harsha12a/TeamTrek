@@ -5,7 +5,7 @@ function UserProfile() {
   const user = useSelector((state) => state.user.user)
 
   return (
-    <div className="h-[95vh] flex items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 p-6">
+    <div className="h-[100vh] flex items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 p-6">
       {user ? (
         <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
           <FaUserCircle className="text-6xl text-gray-600 mx-auto mb-4" />

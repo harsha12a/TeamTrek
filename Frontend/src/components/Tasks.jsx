@@ -148,7 +148,7 @@ export default function Tasks() {
             <div className="flex justify-end gap-4 mt-3">
               <button
                 onClick={() => editTask(task)}
-                className="text-blue-500 hover:text-blue-700 transition"
+                className="text-blue-500 hover:text-blue-700 transition cursor-pointer"
               >
                 <FaEdit size={18} />
               </button>

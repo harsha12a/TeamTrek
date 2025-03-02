@@ -6,6 +6,8 @@ import { editGroupAsync, fetchTasks } from "../redux/groupSlice";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import { deleteTask } from "../redux/taskSlice";
+import { FaEye, FaDownload, FaFileAlt, FaEdit, FaTrash } from "react-icons/fa";
 
 function GroupDetails() {
   const { id } = useParams(); // Get group ID from URL
@@ -78,6 +80,16 @@ function GroupDetails() {
   // };
 
   // Handle group edit submission
+  const EditTask = (task) => {
+    navigate("./tasks", {
+      state: {
+        task: task,
+        people: group.people,
+        groupId: group._id,
+        userId: user._id,
+      },
+    });
+  };
   const handleSaveEdit = () => {
     if (!editedGroup.name.trim()) return;
     dispatch(editGroupAsync({ id, updatedGroup: editedGroup }))
@@ -94,7 +106,20 @@ function GroupDetails() {
       })
       .finally(() => setEditMode(false));
   };
-
+  const delTask = (id) => {
+    dispatch(deleteTask({ id }))
+      .unwrap()
+      .then(() => {
+        return dispatch(fetchTasks(user._id));
+      })
+      .catch((error) => {
+        toast.error(error, {
+          position: "top-center",
+          autoClose: 2000,
+          draggable: true,
+        });
+      });
+  };
   // Handle adding people
   const handleAddPeople = async (e) => {
     e.preventDefault();
@@ -244,7 +269,13 @@ function GroupDetails() {
               <Plus
                 className="cursor-pointer"
                 onClick={() =>
-                  navigate("./tasks", { state: { people: group.people } })
+                  navigate("./tasks", {
+                    state: {
+                      people: group.people,
+                      groupId: group._id,
+                      userId: user._id,
+                    },
+                  })
                 }
               />
             </div>
@@ -257,7 +288,19 @@ function GroupDetails() {
                 className="p-4 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition duration-200"
               >
                 <div className="text-lg font-medium text-gray-800">
-                  {task.title}
+                  <div className="flex items-center justify-between">
+                    {task.title}
+                    <div className="flex gap-2 items-center">
+                      <FaEdit
+                        className="cursor-pointer"
+                        onClick={() => EditTask(task)}
+                      />
+                      <FaTrash
+                        className="cursor-pointer text-red-500"
+                        onClick={() => delTask(task._id)}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="text-sm text-gray-600 mb-2">
                   {task.description}
@@ -304,64 +347,67 @@ function GroupDetails() {
                 <div className="text-sm text-gray-500">
                   <strong>Created By:</strong> {task.createdBy.username}
                 </div>
-                {task.files.length > 0 && (
-                  <div className="mt-3">
-                    <strong className="text-sm text-gray-700">Files:</strong>
-                    <div className="mt-2 space-y-2">
-                      {task.files.map((file, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between bg-gray-100 p-2 rounded-lg"
+                {task.files && task.files.length > 0 && (
+                  <div className="mt-2 border-t pt-2">
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      Attachments:
+                    </h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {task.files.map((file, fileIndex) => (
+                        <li
+                          key={fileIndex}
+                          className="flex justify-evenly items-center gap-2 p-2 bg-gray-100 rounded-md"
                         >
-                          <span className="text-sm text-gray-700 truncate w-40">
-                            {file.filename}
+                          <span className="text-gray-700 truncate w-32 flex items-center">
+                            <FaFileAlt className="text-gray-600" />
+                            {file.fileName}
                           </span>
-                          <div className="flex gap-2">
-                            <a
-                              href={file.viewUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 text-sm hover:underline"
-                            >
-                              View
-                            </a>
-                            <a
-                              href={file.downloadUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download={file.name || "download"}
-                              onClick={(e) => {
-                                if (
-                                  !file.downloadUrl.startsWith(
-                                    window.location.origin
-                                  )
-                                ) {
-                                  e.preventDefault();
-                                  fetch(file.downloadUrl)
-                                    .then((res) => res.blob())
-                                    .then((blob) => {
-                                      const url = URL.createObjectURL(blob);
-                                      const a = document.createElement("a");
-                                      a.href = url;
-                                      a.download = file.fileName || "download";
-                                      document.body.appendChild(a);
-                                      a.click();
-                                      document.body.removeChild(a);
-                                      URL.revokeObjectURL(url);
-                                    })
-                                    .catch((err) =>
-                                      console.error("Download failed", err)
-                                    );
-                                }
-                              }}
-                              className="text-green-500 text-sm hover:underline"
-                            >
-                              Download
-                            </a>
-                          </div>
-                        </div>
+                          <a
+                            href={file.filePath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline flex items-center gap-1"
+                          >
+                            <FaEye />{" "}
+                            <span className="hidden sm:inline">View</span>
+                          </a>
+                          <a
+                            href={file.downloadUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download={file.name || "download"}
+                            onClick={(e) => {
+                              if (
+                                !file.downloadUrl.startsWith(
+                                  window.location.origin
+                                )
+                              ) {
+                                e.preventDefault();
+                                fetch(file.downloadUrl)
+                                  .then((res) => res.blob())
+                                  .then((blob) => {
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement("a");
+                                    a.href = url;
+                                    a.download = file.fileName || "download";
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                  })
+                                  .catch((err) =>
+                                    console.error("Download failed", err)
+                                  );
+                              }
+                            }}
+                            className="text-green-500 hover:underline flex items-center gap-1"
+                          >
+                            <FaDownload />{" "}
+                            <span className="hidden sm:inline">Download</span>
+                          </a>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
                   </div>
                 )}
               </div>
