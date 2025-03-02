@@ -1,7 +1,7 @@
 const express = require('express')
 const { PORT } = require('./utils/helpers')
 require('./config/mongoConfig')
-const notifyBeforeDueDate = require('./config/scheduler')
+require('./config/scheduler')
 const cors = require('cors')
 const app = express()
 
@@ -10,16 +10,16 @@ app.use(cors({
     origin: '*'
 }))
 
+app.get('/', (req, res) => {
+    res.send('🚀 WorkGrid API is running...')
+})
 app.use('/user', require('./routes/user.routes'))
 app.use('/task', require('./routes/task.routes'))
 app.use('/group', require('./routes/group.routes'))
 
 // notifyBeforeDueDate()
 
-app.get('/', (req, res) => {
-    res.send('🚀 WorkGrid API is running...')
-})
 
-app.listen(PORT, () => {
+app.listen(PORT || 4000, () => {
     console.log(`⚡ Server running on port ${PORT}`)
 })
