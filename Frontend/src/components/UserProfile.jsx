@@ -1,13 +1,12 @@
 import { useSelector } from "react-redux"
 import { FaUserCircle, FaEnvelope, FaPhone } from "react-icons/fa"
-import { Link } from "react-router-dom"
+import TaskBar from "./TaskBar"
 function UserProfile() {
   const user = useSelector((state) => state.user.user)
 
   return (
-    <div className="h-[100vh] flex items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 p-6">
-      {user ? (
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+    <div className="h-full items-center justify-center bg-gradient-to-r from-blue-400 to-purple-600 p-6">
+        <div className="bg-white mx-auto my-20 rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
           <FaUserCircle className="text-6xl text-gray-600 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
           <p className="text-gray-500 text-sm">User Profile</p>
@@ -22,15 +21,7 @@ function UserProfile() {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="text-white text-center text-lg font-semibold">
-          Not logged in
-          <br />
-          <Link to={"../login"} className="text-red-900">
-            Login here
-          </Link>
-        </div>
-      )}
+          <TaskBar />
     </div>
   )
 }
