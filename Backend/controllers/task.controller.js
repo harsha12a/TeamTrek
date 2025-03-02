@@ -107,12 +107,13 @@ const createTask = async (req, res) => {
 
 const editTask = async (req, res) => {
   const taskId = req.params.id;
-  const {assignedTo} = req.body
+  let {assignedTo} = req.body
   try {
     let assignedUsers = [];
     let assignedToId = []
     if (assignedTo && assignedTo.length > 0) {
       // assignedTo = JSON.parse(assignedTo)
+      assignedTo = assignedTo.map(user => user.username)
       assignedUsers = await User.find({ username: { $in: assignedTo } });
       if (assignedUsers.length !== assignedTo.length) {
         return res
