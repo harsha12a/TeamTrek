@@ -2,6 +2,8 @@ const Task = require("../models/task.model");
 const User = require("../models/user.model");
 const Group = require("../models/group.model");
 const sendMail = require("../config/nodeMailer");
+const taskTemplate = require("../pages/taskTemplate")
+const addedUserTemplate = require("../pages/addedUserTemplate")
 const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find();
@@ -94,21 +96,8 @@ const createTask = async (req, res) => {
     if (assignedUsers.length > 0) {
       const taskTitle = task.title || "a task";
       assignedUsers.forEach(async (taggedUser) => {
-        const emailContent = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-            <img src="https://example.com/logo.png" alt="Your App Logo" style="display: block; margin: 0 auto; max-width: 200px;">
-            <h1>WorkGrid</h1>
-            <h2 style="color: #333;">You've been tagged in a task!</h2>
-            <p>Hi <strong>${taggedUser.name}</strong>,</p>
-            <p>You have been tagged in <strong>${taskTitle}</strong> by ${user.name}.</p>
-            <p style="margin: 10px 0;">Description: ${task.description || "No description available."}</p>
-            <a href="https://your-app-link.com/tasks/${newTask._id}" style="display: inline-block; padding: 10px 15px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">View Task</a>
-            <p style="margin-top: 20px;">Regards,<br/>Task Manager</p>
-          </div>
-        `;
-        
         // Send email to each tagged user
-        await sendMail(taggedUser.email, `You were tagged in a task: ${taskTitle}`, emailContent);
+        await sendMail(taggedUser.email, `You were tagged in a task: ${taskTitle}`, taskTemplate(taggedUser, user, task));
       });
     }
 
@@ -142,6 +131,13 @@ const editTask = async (req, res) => {
     }, {
       new: true,
     });
+    if (assignedUsers.length > 0) {
+      const taskTitle = req.body.title || "a task";
+      assignedUsers.forEach(async (taggedUser) => {
+        // Send email to each tagged user
+        await sendMail(taggedUser.email, `You were tagged in a task: ${taskTitle}`, addedUserTemplate(taggedUser, req.body));
+      });
+    }
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
