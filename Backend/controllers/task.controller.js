@@ -229,6 +229,66 @@ const addMention = async (req, res) => {
 //   { $sort: { "_id.date": 1 } }
 // ]);
 
+// Route to get day-wise task count for the last 7 days created by a specific user
+const mongoose = require("mongoose");
+
+const getDayWiseTaskCount = async (req, res) => {
+    const { id: userId } = req.params;  // Corrected destructuring
+
+    if (!userId) {
+        return res.status(400).json({ error: "Missing userId parameter" });
+    }
+
+    try {
+        const now = new Date();  // Current date and time
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(now.getDate() - 6);  // 6 days back + today = 7 days
+
+
+        // Convert userId to ObjectId
+        const objectId = new mongoose.Types.ObjectId(userId);
+
+        // Aggregate day-wise count
+        const taskCounts = await Task.aggregate([
+            {
+                $match: {
+                    createdBy: objectId,
+                    createdAt: { $gte: sevenDaysAgo, $lte: now }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { "_id": 1 }  // Sort by date ascending
+            }
+        ]);
+
+        // Prepare day-wise array
+        const dayWiseCounts = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(now.getDate() - i);
+            const dateString = date.toISOString().split('T')[0];
+
+            const taskForDay = taskCounts.find(task => task._id === dateString);
+            dayWiseCounts.push(taskForDay ? taskForDay.count : 0);
+        }
+
+        res.json({
+            dayWiseCounts
+        });
+    } catch (error) {
+        console.error("Error fetching tasks:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 module.exports = {
   getTasks,
   getUserTasks,
@@ -236,4 +296,5 @@ module.exports = {
   editTask,
   deleteTask,
   addMention,
+  getDayWiseTaskCount
 };

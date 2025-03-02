@@ -22,3 +22,6 @@ Content-Type: application/json
 {
     "assignedTo": "67aa11fd3adb5f86b4ad3657"
 }
+
+###
+get http://localhost:4000/task/getDayWiseTaskCount/67c3ecd0150a5525193e7c58
