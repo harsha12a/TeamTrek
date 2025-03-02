@@ -77,11 +77,11 @@ const taskTemplate = (taggedUser, task) => `
     </div>
     <div class="content">
         <h2>You've been tagged in a task!</h2>
-        <p>Hi <strong>${taggedUser.name}</strong>,</p>
-        <p>You have been tagged in <strong>${task.title}</strong>.</p>
-        <p>Description: ${task.description || "No description available."}</p>
+        <p>Hi <strong>${taggedUser?.name || 'User'}</strong>,</p>
+        <p>You have been tagged in <strong>${task?.title || 'a task'}</strong>.</p>
+        <p>Description: ${task?.description || "No description available."}</p>
         <div class="btn-container">
-            <a href="https://workgrid.netlify.app/tasks" class="btn">View Tasks</a>
+            <a href="https://workgrid.netlify.app/tasks/${task?.id || ''}" class="btn" aria-label="View Task Details">View Task</a>
         </div>
     </div>
     <div class="footer">

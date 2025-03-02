@@ -44,6 +44,24 @@ const groupTemplate = ({ groupUser, groupName, groupId }) => `
             color: #555;
             line-height: 1.6;
         }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+        }
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -59,16 +77,16 @@ const groupTemplate = ({ groupUser, groupName, groupId }) => `
         <h1>WorkGrid</h1>
     </div>
     <div class="content">
-        <h2>Welcome to the group: ${groupName}!</h2>
-        <p>Hi <strong>${groupUser.name}</strong>,</p>
-        <p>You have been successfully added to the group <strong>${groupName}</strong>.</p>
+        <h2>Welcome to the group: ${groupName || "Unnamed Group"}!</h2>
+        <p>Hi <strong>${groupUser.name || "there"}</strong>,</p>
+        <p>You have been successfully added to the group <strong>${groupName || "Unnamed Group"}</strong>.</p>
         <p>Feel free to explore and collaborate with your team members!</p>
     </div>
-    <a href="https://workgrid.netlify.app/groups/${groupId}" 
-   style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4); transition: transform 0.3s, box-shadow 0.3s;">
-   View Group
-</a>
-
+    <div class="btn-container">
+        <a href="https://workgrid.netlify.app/groups/${groupId}" class="btn">
+            View Group
+        </a>
+    </div>
     <div class="footer">
         <p>Regards,<br/>WorkGrid Team</p>
     </div>

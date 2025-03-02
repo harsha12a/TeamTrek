@@ -1,6 +1,7 @@
 const express = require('express')
 const { PORT } = require('./utils/helpers')
-const mongoose = require('./config/mongoConfig')
+require('./config/mongoConfig')
+const notifyBeforeDueDate = require('./config/scheduler')
 const cors = require('cors')
 const app = express()
 
@@ -13,8 +14,10 @@ app.use('/user', require('./routes/user.routes'))
 app.use('/task', require('./routes/task.routes'))
 app.use('/group', require('./routes/group.routes'))
 
+// notifyBeforeDueDate()
+
 app.get('/', (req, res) => {
-    res.send('🚀 TeamTrek API is running...')
+    res.send('🚀 WorkGrid API is running...')
 })
 
 app.listen(PORT, () => {
